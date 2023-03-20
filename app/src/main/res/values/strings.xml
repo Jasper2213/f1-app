@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Formula 1</string>
+    <string name="next_race">Next race</string>
+    <string name="calendar">Calendar</string>
+    <string name="standings">Standings</string>
+    <string name="back_button">Back</string>
+    <string name="driver_standings">Driver standings</string>
+    <string name="constructor_standings">Constructor standings</string>
+    <string name="menu">Menu</string>
+    <string name="predictions">Predictions</string>
+</resources>
