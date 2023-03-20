@@ -21,12 +21,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.*
+import be.howest.jasperdesnyder.formulaone.ui.screens.CalendarScreen
 import be.howest.jasperdesnyder.formulaone.ui.screens.MenuScreen
 import be.howest.jasperdesnyder.formulaone.ui.screens.PredictionScreen
+import be.howest.jasperdesnyder.formulaone.ui.screens.RaceDetailScreen
 
 enum class FormulaOneScreen(@StringRes val title: Int) {
     Start(title = R.string.next_race),
     Calendar(title = R.string.calendar),
+    RaceDetail(title = R.string.calendar),
     DriverStandings(title = R.string.driver_standings),
     ConstructorStandings(title = R.string.constructor_standings),
     Menu(title = R.string.menu),
@@ -85,7 +88,18 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             }
 
             composable(route = FormulaOneScreen.Calendar.name) {
-                CalendarScreen()
+                CalendarScreen(
+                    viewModel = viewModel,
+                    onRaceClicked = {
+                        navController.navigate(FormulaOneScreen.RaceDetail.name)
+                    }
+                )
+            }
+
+            composable(route = FormulaOneScreen.RaceDetail.name) {
+                RaceDetailScreen(
+                    selectedRace = viewModel.getSelectedRace()
+                )
             }
 
             composable(route = FormulaOneScreen.DriverStandings.name) {

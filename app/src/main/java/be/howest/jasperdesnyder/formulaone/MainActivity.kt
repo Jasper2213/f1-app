@@ -9,6 +9,8 @@ import be.howest.jasperdesnyder.formulaone.ui.theme.FormulaOneTheme
 // TODO: Find good icons
 // TODO: Pick theme colors
 // TODO: Change fonts?
+// TODO: Add field for results in race?
+    // If null => no results yet
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
