@@ -1,9 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.model.Race

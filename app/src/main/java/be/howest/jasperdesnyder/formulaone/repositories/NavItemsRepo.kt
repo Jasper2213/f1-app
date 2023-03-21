@@ -2,13 +2,8 @@ package be.howest.jasperdesnyder.formulaone.repositories
 
 import be.howest.jasperdesnyder.formulaone.FormulaOneScreen
 import be.howest.jasperdesnyder.formulaone.model.BottomNavItem
-import be.howest.jasperdesnyder.formulaone.ui.Line
-import compose.icons.FeatherIcons
 import compose.icons.LineAwesomeIcons
-import compose.icons.TablerIcons
-import compose.icons.feathericons.*
 import compose.icons.lineawesomeicons.*
-import compose.icons.tablericons.*
 
 object NavItemsRepo {
     val items = listOf(

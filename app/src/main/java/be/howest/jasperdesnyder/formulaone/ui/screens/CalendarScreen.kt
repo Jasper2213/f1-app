@@ -13,7 +13,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.repositories.RaceRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 

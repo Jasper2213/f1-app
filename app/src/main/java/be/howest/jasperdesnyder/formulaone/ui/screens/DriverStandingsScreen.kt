@@ -1,4 +1,4 @@
-package be.howest.jasperdesnyder.formulaone.ui
+package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

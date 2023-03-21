@@ -20,11 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
-import be.howest.jasperdesnyder.formulaone.ui.*
-import be.howest.jasperdesnyder.formulaone.ui.screens.CalendarScreen
-import be.howest.jasperdesnyder.formulaone.ui.screens.MenuScreen
-import be.howest.jasperdesnyder.formulaone.ui.screens.PredictionScreen
-import be.howest.jasperdesnyder.formulaone.ui.screens.RaceDetailScreen
+import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
+import be.howest.jasperdesnyder.formulaone.ui.screens.*
 
 enum class FormulaOneScreen(@StringRes val title: Int) {
     Start(title = R.string.next_race),
