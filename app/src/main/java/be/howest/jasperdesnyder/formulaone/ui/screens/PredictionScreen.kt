@@ -2,6 +2,7 @@ package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,8 @@ fun PredictionScreen(
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     var usedPoints by rememberSaveable { mutableStateOf(0.0) }
+
+    var showDialog by remember { mutableStateOf(false) }
 
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
     else Icons.Filled.KeyboardArrowDown
@@ -138,7 +142,7 @@ fun PredictionScreen(
                 },
                 label = { Text(stringResource(R.string.enter_points)) },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Number
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState.predictionsEnabled
@@ -163,21 +167,46 @@ fun PredictionScreen(
 
         Button(
             onClick = {
-                if (usedPoints != 0.0 && selectedDriver.isNotEmpty()) {
-                    if (usedPoints <= uiState.availablePoints) {
-                        viewModel.updateUsedPoints(usedPoints)
-                        viewModel.updateAvailablePoints()
-                        viewModel.updateSelectedDriver(selectedDriver)
-                        viewModel.updatePredictionsEnabled(false)
-                    }
-                }
-
-                onSubmitClicked()
+                showDialog = true
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState.predictionsEnabled
         ) {
             Text(text = stringResource(R.string.submit))
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirm prediction?") },
+            text = { Text("This cannot be undone!") },
+            confirmButton = {
+                Button(onClick = {
+                    if (usedPoints != 0.0 &&
+                        selectedDriver.isNotEmpty() &&
+                        usedPoints <= uiState.availablePoints
+                    ) {
+                        viewModel.updateUsedPoints(usedPoints)
+                        viewModel.updateAvailablePoints()
+                        viewModel.updateSelectedDriver(selectedDriver)
+                        viewModel.updatePredictionsEnabled(false)
+                    }
+
+                    onSubmitClicked()
+
+                    showDialog = false
+                }) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("Dismiss")
+                }
+            }
+        )
     }
 }
