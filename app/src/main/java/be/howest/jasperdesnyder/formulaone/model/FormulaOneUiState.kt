@@ -8,8 +8,9 @@ data class FormulaOneUiState (
     var selectedRace: Race = RaceRepo.races.first(),
 
     /* Values used for predictions */
-    var availablePoints: Int = 1200,
+    var availablePoints: Double = 1200.00,
     var selectedDriver: String? = null,      // Only keep first name
-    var usedPoints: Int = 0,
-    var nextRace: Race = RaceRepo.races[Random.nextInt(RaceRepo.races.size)]
+    var usedPoints: Double = 0.00,
+    var nextRace: Race = RaceRepo.races[Random.nextInt(RaceRepo.races.size)],
+    var predictionsEnabled: Boolean = true
 )
