@@ -103,7 +103,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
 
             composable(route = FormulaOneScreen.RaceDetail.name) {
                 RaceDetailScreen(
-                    selectedRace = viewModel.selectedRace
+                    selectedRace = uiState.nextRace
                 )
             }
 
@@ -149,6 +149,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
 
             composable(route = FormulaOneScreen.Predictions.name) {
                 PredictionScreen(
+                    uiState = uiState,
                     onSubmitClicked = {
                         navController.navigate(FormulaOneScreen.Predictions.name)
                     },

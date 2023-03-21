@@ -31,7 +31,7 @@ fun CalendarScreen(
                     .fillMaxSize()
                     .padding(horizontal = 15.dp)
                     .clickable(onClick = {
-                        viewModel.selectedRace = race
+                        viewModel.updateSelectedRace(race)
                         onRaceClicked()
                     })
             ) {

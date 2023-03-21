@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,11 +22,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import be.howest.jasperdesnyder.formulaone.R
+import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.repositories.DriverRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 
+// TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
+
 @Composable
 fun PredictionScreen(
+    uiState: FormulaOneUiState,
     onSubmitClicked: () -> Unit,
     viewModel: FormulaOneViewModel,
     modifier: Modifier = Modifier
@@ -52,13 +56,13 @@ fun PredictionScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Your current amount of points:",
+                text = stringResource(R.string.current_amount_of_points),
                 fontSize = 24.sp,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = viewModel.availablePoints.value.toString(),
+                text = uiState.availablePoints.toString(),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -67,13 +71,13 @@ fun PredictionScreen(
 
         Column {
             Text(
-                text = "Who will win the ${stringResource(viewModel.nexRace.value!!.title)} Grand Prix?",
+                text = "Who will win the ${stringResource(uiState.nextRace.title)} Grand Prix?",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             OutlinedTextField(
-                value = viewModel.selectedDriver.value ?: selectedDriver,
+                value = uiState.selectedDriver ?: selectedDriver,
                 onValueChange = { selectedDriver = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,15 +85,16 @@ fun PredictionScreen(
                         textFieldSize =
                             coordinates.size.toSize()  // Makes the dropdown menu the same width as the text field
                     },
-                label = { Text("Select driver") },
+                label = { Text(stringResource(R.string.select_driver)) },
                 trailingIcon = {
+                    // TODO: Improve this (add parameter names, replace contentDescription with something more meaningful)
                     Icon(
                         icon,
                         "contentDescription",
                         Modifier.clickable { expanded = !expanded })
                 },
                 readOnly = true,
-                enabled = viewModel.predictionsEnabled.value!!
+                enabled = uiState.predictionsEnabled
             )
 
             DropdownMenu(
@@ -113,13 +118,13 @@ fun PredictionScreen(
 
         Column {
             Text(
-                text = "How many points do you want to use?",
+                text = stringResource(R.string.points_to_use),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             OutlinedTextField(
-                value = if (!viewModel.predictionsEnabled.value!!) viewModel.usedPoints.value!!.toString()
+                value = if (!uiState.predictionsEnabled) uiState.usedPoints.toString()
                             else if (usedPoints == 0.0) ""
                             else usedPoints.toString(),
                 onValueChange = {
@@ -129,14 +134,14 @@ fun PredictionScreen(
                         } else {
                             0.0
                         }
-                    viewModel.usedPoints.value = usedPoints
+                    viewModel.updateUsedPoints(usedPoints)
                 },
-                label = { Text("Enter points") },
+                label = { Text(stringResource(R.string.enter_points)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                 ),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = viewModel.predictionsEnabled.value!!
+                enabled = uiState.predictionsEnabled
             )
         }
 
@@ -144,13 +149,13 @@ fun PredictionScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Potential points to win (x1.2):",
+                text = stringResource(R.string.potential_points_to_win),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = (viewModel.usedPoints.value!! * 1.2).toString(),
+                text = (uiState.usedPoints * 1.2).toString(),
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
             )
@@ -158,24 +163,21 @@ fun PredictionScreen(
 
         Button(
             onClick = {
-                // TODO: Check if everything is filled in
-                // TODO: Check if used points is not higher than available points
-
-                viewModel.usedPoints.value = usedPoints
-                viewModel.availablePoints.value = viewModel.availablePoints.value!! - usedPoints
-                viewModel.selectedDriver.value = selectedDriver
-                viewModel.predictionsEnabled.value = false
-
-                Log.d("PredictionScreen", viewModel.selectedDriver.toString())
-                Log.d("PredictionScreen", viewModel.usedPoints.toString())
-                Log.d("PredictionScreen", viewModel.predictionsEnabled.toString())
+                if (usedPoints != 0.0 && selectedDriver.isNotEmpty()) {
+                    if (usedPoints <= uiState.availablePoints) {
+                        viewModel.updateUsedPoints(usedPoints)
+                        viewModel.updateAvailablePoints()
+                        viewModel.updateSelectedDriver(selectedDriver)
+                        viewModel.updatePredictionsEnabled(false)
+                    }
+                }
 
                 onSubmitClicked()
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = viewModel.predictionsEnabled.value!!
+            enabled = uiState.predictionsEnabled
         ) {
-            Text(text = "Submit prediction")
+            Text(text = stringResource(R.string.submit))
         }
     }
 }

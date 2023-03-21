@@ -32,4 +32,10 @@
     <string name="las_vegas">Las Vegas</string>
     <string name="abu_dhabi">Abu Dhabi</string>
     <string name="no_results">No results yet…</string>
+    <string name="points_to_use">How many points do you want to use?</string>
+    <string name="select_driver">Select driver</string>
+    <string name="current_amount_of_points">Your current amount of points:</string>
+    <string name="enter_points">Enter points</string>
+    <string name="potential_points_to_win">Potential points to win (x1.2):</string>
+    <string name="submit">Submit prediction</string>
 </resources>
