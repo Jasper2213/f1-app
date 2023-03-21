@@ -1,5 +1,9 @@
 package be.howest.jasperdesnyder.formulaone
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +47,10 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
     )
 
     val viewModel: FormulaOneViewModel = viewModel()
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {}
 
     Scaffold(
         topBar = {
@@ -116,7 +125,27 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             }
 
             composable(route = FormulaOneScreen.Menu.name) {
-                MenuScreen()
+                MenuScreen(
+                    onNextRaceClicked = {
+                        navController.navigate(FormulaOneScreen.Start.name)
+                    },
+                    onDriversStandingsClicked = {
+                        navController.navigate(FormulaOneScreen.DriverStandings.name)
+                    },
+                    onConstructorsStandingsClicked = {
+                        navController.navigate(FormulaOneScreen.ConstructorStandings.name)
+                    },
+                    onCalendarClicked = {
+                        navController.navigate(FormulaOneScreen.Calendar.name)
+                    },
+                    onPredictionsClicked = {
+                        navController.navigate(FormulaOneScreen.Predictions.name)
+                    },
+                    onWebsiteClicked = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.formula1.com"))
+                        launcher.launch(intent)
+                    }
+                )
             }
 
             composable(route = FormulaOneScreen.Predictions.name) {

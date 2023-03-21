@@ -1,16 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.repositories
 
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.painter.BrushPainter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.unit.dp
 import be.howest.jasperdesnyder.formulaone.FormulaOneScreen
-import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.BottomNavItem
 import compose.icons.LineAwesomeIcons
 import compose.icons.lineawesomeicons.*
