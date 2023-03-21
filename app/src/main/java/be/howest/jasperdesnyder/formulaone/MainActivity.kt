@@ -5,10 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import be.howest.jasperdesnyder.formulaone.ui.theme.FormulaOneTheme
 
-// TODO: Find good icons
+// TODO: Add predictions screen/functionality
 // TODO: Pick theme colors
 // TODO: Change fonts?
-// TODO: Add field for results in race? If empty => no results yet
+// TODO: Implement API
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
