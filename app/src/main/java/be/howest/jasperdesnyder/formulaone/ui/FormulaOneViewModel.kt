@@ -16,5 +16,22 @@ class FormulaOneViewModel : ViewModel() {
     }
 
     fun getSelectedRace() = _uiState.value.selectedRace
+
+    fun getAvailablePoints() = _uiState.value.availablePoints
+
+    fun getSelectedDriver() = _uiState.value.selectedDriver
+
+    fun setSelectedDriver(driver: String?) {
+        _uiState.value.selectedDriver = driver
+    }
+
+    fun setUsedPoints(points: Int) {
+        _uiState.value.usedPoints = points
+        _uiState.value.availablePoints -= points
+    }
+
+    fun getUsedPoints() = _uiState.value.usedPoints
+
+    fun getNextRace() = _uiState.value.nextRace
 }
 

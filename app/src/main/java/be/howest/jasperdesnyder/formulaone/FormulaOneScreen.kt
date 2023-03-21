@@ -148,7 +148,9 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             }
 
             composable(route = FormulaOneScreen.Predictions.name) {
-                PredictionScreen()
+                PredictionScreen(
+                    viewModel = viewModel
+                )
             }
         }
     }
