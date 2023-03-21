@@ -8,4 +8,27 @@
     <string name="constructor_standings">Constructor standings</string>
     <string name="menu">Menu</string>
     <string name="predictions">Predictions</string>
+    <string name="bahrain">Bahrain</string>
+    <string name="saudi_arabia">Saudi Arabia</string>
+    <string name="australia">Australia</string>
+    <string name="azerbaijan">Azerbaijan</string>
+    <string name="miami">Miami</string>
+    <string name="imola">Imola</string>
+    <string name="monaco">Monaco</string>
+    <string name="spain">Spain</string>
+    <string name="canada">Canada</string>
+    <string name="austria">Austria</string>
+    <string name="great_britain">Great Britain</string>
+    <string name="hungary">Hungary</string>
+    <string name="belgium">Belgium</string>
+    <string name="netherlands">Netherlands</string>
+    <string name="monza">Monza</string>
+    <string name="singapore">Singapore</string>
+    <string name="japan">Japan</string>
+    <string name="qatar">Qatar</string>
+    <string name="united_states">United States</string>
+    <string name="mexico">Mexico</string>
+    <string name="brazil">Brazil</string>
+    <string name="las_vegas">Las Vegas</string>
+    <string name="abu_dhabi">Abu Dhabi</string>
 </resources>

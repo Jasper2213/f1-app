@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -23,14 +24,16 @@ fun StartScreen(
             .fillMaxSize()
             .padding(15.dp)
     ) {
-        Column (modifier = Modifier.align(Alignment.Center)) {
+        Column(modifier = Modifier.align(Alignment.Center)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.padding(end = 10.dp)
+                ) {
                     Text(
-                        text = "Australia",
+                        text = stringResource(R.string.australia),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline
@@ -42,8 +45,8 @@ fun StartScreen(
                     )
                 }
                 Image(
-                    painter = painterResource(R.drawable.australia),
-                    contentDescription = "Australia"
+                    painter = painterResource(R.drawable.temp),
+                    contentDescription = stringResource(R.string.australia) + " track layout"
                 )
             }
 
@@ -87,7 +90,7 @@ private fun Session(
     startTime: String,
     endTime: String? = null
 ) {
-    Column (
+    Column(
         modifier = Modifier.padding(vertical = 10.dp)
     ) {
         Text(
@@ -96,7 +99,7 @@ private fun Session(
             fontWeight = FontWeight.Bold
         )
 
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
