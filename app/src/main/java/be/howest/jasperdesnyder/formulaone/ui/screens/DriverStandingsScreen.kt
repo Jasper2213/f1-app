@@ -43,15 +43,7 @@ fun DriverStandingsScreen(
             )
         }
 
-        Line(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(
-                    elevation = 5.dp,
-                    ambientColor = Color.Black,
-                    spotColor = Color.Black,
-                )
-        )
+        Line()
 
         LazyColumn {
             itemsIndexed(DriverRepo.drivers) { index, driver ->
@@ -158,6 +150,12 @@ fun Line(modifier: Modifier = Modifier) {
     Divider(
         color = Color.Black,
         thickness = 1.dp,
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+            )
     )
 }

@@ -31,4 +31,5 @@
     <string name="brazil">Brazil</string>
     <string name="las_vegas">Las Vegas</string>
     <string name="abu_dhabi">Abu Dhabi</string>
+    <string name="no_results">No results yet…</string>
 </resources>

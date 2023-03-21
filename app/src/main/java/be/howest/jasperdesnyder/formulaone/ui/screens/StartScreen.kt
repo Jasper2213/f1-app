@@ -13,7 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.howest.jasperdesnyder.formulaone.R
+import be.howest.jasperdesnyder.formulaone.model.Race
+import be.howest.jasperdesnyder.formulaone.repositories.RaceRepo
+import kotlin.random.Random
 
 @Composable
 fun StartScreen(
@@ -25,30 +27,7 @@ fun StartScreen(
             .padding(15.dp)
     ) {
         Column(modifier = Modifier.align(Alignment.Center)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(end = 10.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.australia),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                    Text(
-                        text = "31 - 01 mar-apr",
-                        fontSize = 24.sp,
-                        fontStyle = FontStyle.Italic
-                    )
-                }
-                Image(
-                    painter = painterResource(R.drawable.temp),
-                    contentDescription = stringResource(R.string.australia) + " track layout"
-                )
-            }
+            GeneralRaceInformation()
 
             Session(
                 title = "Practice 1",
@@ -80,6 +59,34 @@ fun StartScreen(
                 startTime = "18:00"
             )
         }
+    }
+}
+
+@Composable
+fun GeneralRaceInformation(race: Race = RaceRepo.races[Random.nextInt(RaceRepo.races.size)]) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(end = 10.dp)
+        ) {
+            Text(
+                text = stringResource(race.title),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
+            )
+            Text(
+                text = race.date,
+                fontSize = 24.sp,
+                fontStyle = FontStyle.Italic
+            )
+        }
+        Image(
+            painter = painterResource(race.trackLayoutRes),
+            contentDescription = stringResource(race.title) + " track layout"
+        )
     }
 }
 

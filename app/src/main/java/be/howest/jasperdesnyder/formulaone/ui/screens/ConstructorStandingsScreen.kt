@@ -7,8 +7,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -39,14 +37,7 @@ fun ConstructorStandingsScreen(
             )
         }
 
-        Line(modifier = Modifier
-            .fillMaxWidth()
-            .shadow(
-                elevation = 5.dp,
-                ambientColor = Color.Black,
-                spotColor = Color.Black,
-            )
-        )
+        Line()
 
         LazyColumn {
             itemsIndexed(ConstructorRepo.constructors) { index, constructor ->
