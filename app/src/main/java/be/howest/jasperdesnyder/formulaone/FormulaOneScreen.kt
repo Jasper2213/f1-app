@@ -103,7 +103,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
 
             composable(route = FormulaOneScreen.RaceDetail.name) {
                 RaceDetailScreen(
-                    selectedRace = uiState.nextRace
+                    selectedRace = uiState.selectedRace
                 )
             }
 
