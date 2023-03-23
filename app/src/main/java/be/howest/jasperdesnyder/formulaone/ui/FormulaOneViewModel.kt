@@ -6,6 +6,7 @@ import be.howest.jasperdesnyder.formulaone.model.Race
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class FormulaOneViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FormulaOneUiState())
@@ -30,5 +31,17 @@ class FormulaOneViewModel : ViewModel() {
     fun updateSelectedRace(race: Race) {
         _uiState.value.selectedRace = race
     }
+
+//    private fun updateUiState() {
+//        _uiState.update { currentState ->
+//            currentState.copy(
+////                availablePoints = currentState.availablePoints - currentState.usedPoints,
+//                selectedDriver = currentState.selectedDriver,
+//                usedPoints = currentState.usedPoints,
+//                nextRace = currentState.nextRace,
+//                predictionsEnabled = currentState.predictionsEnabled
+//            )
+//        }
+//    }
 }
 

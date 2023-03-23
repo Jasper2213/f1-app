@@ -91,11 +91,10 @@ fun PredictionScreen(
                     },
                 label = { Text(stringResource(R.string.select_driver)) },
                 trailingIcon = {
-                    // TODO: Improve this (add parameter names, replace contentDescription with something more meaningful)
                     Icon(
-                        icon,
-                        "contentDescription",
-                        Modifier.clickable { expanded = !expanded })
+                        imageVector = icon,
+                        contentDescription = "contentDescription",
+                        modifier = Modifier.clickable { expanded = !expanded })
                 },
                 readOnly = true,
                 enabled = uiState.predictionsEnabled
