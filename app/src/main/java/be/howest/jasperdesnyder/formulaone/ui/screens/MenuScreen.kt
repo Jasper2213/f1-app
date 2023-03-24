@@ -1,14 +1,13 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,12 +42,20 @@ fun MenuScreen(
 
 @Composable
 private fun MenuItem(onClick: () -> Unit, text: String) {
-    Text(
-        text = text,
-        fontSize = 32.sp,
-        fontWeight = FontWeight.Bold,
-        textDecoration = TextDecoration.Underline,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.clickable(onClick = onClick).padding(vertical = 15.dp)
-    )
+    Card(
+        elevation = 3.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .padding(15.dp)
+        )
+    }
 }
