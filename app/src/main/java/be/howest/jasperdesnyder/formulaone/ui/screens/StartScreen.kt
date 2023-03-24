@@ -37,7 +37,7 @@ fun StartScreen(
     when (formulaOneApiUiState) {
         is FormulaOneApiUiState.Loading -> LoadingScreen()
         is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> StartScreenContent(formulaOneApiUiState.races.random())
+        is FormulaOneApiUiState.Success -> StartScreenContent(formulaOneApiUiState.nextRace)
     }
 }
 

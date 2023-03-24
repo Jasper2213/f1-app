@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,9 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import java.text.Normalizer.Form
 
 sealed interface FormulaOneApiUiState {
-    data class Success(val races: List<Race>) : FormulaOneApiUiState
+    data class Success(val races: List<Race>, val nextRace: Race) : FormulaOneApiUiState
     object Error : FormulaOneApiUiState
     object Loading : FormulaOneApiUiState
 }
@@ -28,27 +28,23 @@ class FormulaOneViewModel : ViewModel() {
         private set
 
     init {
-        getRaces()
+        getSeasonInformation()
     }
 
-    private fun getRaces() {
+    private fun getSeasonInformation() {
         viewModelScope.launch {
             formulaOneApiUiState =
                 try {
-//                    val mrData: MRData = FormulaOneApi.retrofitService.getMRData()
-//                    val raceData = mrData.raceData
-//                    val races = raceData.races
+                    var apiResponse = FormulaOneApi.retrofitService.getCalendar()
+                    val races = apiResponse.MRData?.RaceTable?.Races
 
-                    val apiResponse = FormulaOneApi.retrofitService.getMRData()
-                    val mrData = apiResponse.MRData
-                    val raceTable = mrData?.RaceTable
-                    val races = raceTable?.Races
+                    apiResponse = FormulaOneApi.retrofitService.getNextRace()
+                    val nextRace = apiResponse.MRData?.RaceTable?.Races?.get(0)
 
-                    Log.d("FormulaOneViewModel", "mrdata: $mrData")
-                    Log.d("FormulaOneViewModel", "racetable: $raceTable")
-
-
-                    FormulaOneApiUiState.Success(races!!)
+                    FormulaOneApiUiState.Success(
+                        races = races!!,
+                        nextRace = nextRace!!
+                    )
                 } catch (e: IOException) {
                     FormulaOneApiUiState.Error
                 } catch (e: HttpException) {

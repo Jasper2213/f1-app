@@ -1,8 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.network
 
 import be.howest.jasperdesnyder.formulaone.model.ApiCalendarResponse
-import be.howest.jasperdesnyder.formulaone.model.MRData
-import be.howest.jasperdesnyder.formulaone.model.RaceTable
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -16,7 +14,10 @@ private val retrofit = Retrofit.Builder()
 
 interface FormulaOneApiService {
     @GET("current.json")
-    suspend fun getMRData(): ApiCalendarResponse
+    suspend fun getCalendar(): ApiCalendarResponse
+
+    @GET("current/next.json")
+    suspend fun getNextRace(): ApiCalendarResponse
 }
 
 object FormulaOneApi {
