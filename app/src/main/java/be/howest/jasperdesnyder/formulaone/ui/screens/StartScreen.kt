@@ -1,6 +1,7 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -8,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -22,8 +22,7 @@ import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.model.Session
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
-import java.time.LocalDate
-import java.time.LocalTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
@@ -196,11 +195,10 @@ private fun getDateFromSession(date: String): String {
 @RequiresApi(Build.VERSION_CODES.O)
 private fun getTimeInLocalFormat(time: String): String {
     val original = LocalTime.parse(time, DateTimeFormatter.ISO_OFFSET_TIME)
-
     val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-        .withLocale(Locale.GERMAN)
+                                     .withLocale(Locale.Builder().setLanguageTag("be").build())
 
-    return formatter.format(original)
+    return formatter.format(original.plusHours(2))
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
