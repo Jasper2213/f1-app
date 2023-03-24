@@ -2,19 +2,27 @@ package be.howest.jasperdesnyder.formulaone
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +46,7 @@ enum class FormulaOneScreen(@StringRes val title: Int) {
     Predictions(title = R.string.predictions)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FormulaOneApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -204,11 +213,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize()
     ) {
-        Image(
-            modifier = Modifier.size(200.dp),
-            painter = painterResource(R.drawable.australia),
-            contentDescription = stringResource(R.string.loading)
-        )
+        LoadingAnimation()
     }
 }
 
@@ -219,5 +224,44 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) {
         Text(stringResource(R.string.loading_failed))
+    }
+}
+
+@Composable
+private fun LoadingAnimation(
+    circleColor: Color = Color.Blue,
+    animationDelay: Int = 1000
+) {
+
+    // circle's scale state
+    var circleScale by remember { mutableStateOf(0f) }
+
+    // animation
+    val circleScaleAnimate = animateFloatAsState(
+        targetValue = circleScale,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = animationDelay
+            )
+        )
+    )
+
+    // This is called when the app is launched
+    LaunchedEffect(Unit) {
+        circleScale = 1f
+    }
+
+    // animating circle
+    Box(
+        modifier = Modifier
+            .size(size = 64.dp)
+            .scale(scale = circleScaleAnimate.value)
+            .border(
+                width = 4.dp,
+                color = circleColor.copy(alpha = 1 - circleScaleAnimate.value),
+                shape = CircleShape
+            )
+    ) {
+
     }
 }

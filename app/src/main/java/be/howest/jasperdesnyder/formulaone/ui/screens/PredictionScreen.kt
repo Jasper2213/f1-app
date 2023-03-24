@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import be.howest.jasperdesnyder.formulaone.ErrorScreen
+import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.repositories.DriverRepo
@@ -38,6 +40,19 @@ fun PredictionScreen(
     viewModel: FormulaOneViewModel,
     modifier: Modifier = Modifier
 ) {
+    when (formulaOneApiUiState) {
+        is FormulaOneApiUiState.Loading -> LoadingScreen()
+        is FormulaOneApiUiState.Error -> ErrorScreen()
+        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked)
+    }
+}
+
+@Composable
+private fun PredictionScreenContent(
+    uiState: FormulaOneUiState,
+    viewModel: FormulaOneViewModel,
+    onSubmitClicked: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedDriver by rememberSaveable { mutableStateOf("") }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -47,7 +62,7 @@ fun PredictionScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
-    else Icons.Filled.KeyboardArrowDown
+                else Icons.Filled.KeyboardArrowDown
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,8 +143,8 @@ fun PredictionScreen(
             )
             OutlinedTextField(
                 value = if (!uiState.predictionsEnabled) uiState.usedPoints.toString()
-                            else if (usedPoints == 0.0) ""
-                            else usedPoints.toString(),
+                        else if (usedPoints == 0.0) ""
+                        else usedPoints.toString(),
                 onValueChange = {
                     usedPoints =
                         if (it.isNotEmpty()) {
