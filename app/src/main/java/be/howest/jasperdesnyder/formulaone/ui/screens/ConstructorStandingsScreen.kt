@@ -13,9 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import be.howest.jasperdesnyder.formulaone.model.Constructor
 import be.howest.jasperdesnyder.formulaone.repositories.ConstructorRepo
+import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 
 @Composable
 fun ConstructorStandingsScreen(
+    formulaOneApiUiState: FormulaOneApiUiState,
     onDriverStandingsClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {

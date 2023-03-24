@@ -2,7 +2,6 @@ package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,12 +25,14 @@ import androidx.compose.ui.unit.toSize
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.repositories.DriverRepo
+import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 
 // TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
 
 @Composable
 fun PredictionScreen(
+    formulaOneApiUiState: FormulaOneApiUiState,
     uiState: FormulaOneUiState,
     onSubmitClicked: () -> Unit,
     viewModel: FormulaOneViewModel,
@@ -75,7 +75,7 @@ fun PredictionScreen(
 
         Column {
             Text(
-                text = "Who will win the ${stringResource(uiState.nextRace.title)} Grand Prix?",
+                text = "Who will win the ${uiState.nextRace?.raceName} Grand Prix?",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center

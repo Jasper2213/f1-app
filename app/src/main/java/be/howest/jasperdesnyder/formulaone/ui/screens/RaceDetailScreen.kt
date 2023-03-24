@@ -1,9 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +21,11 @@ fun RaceDetailScreen(
     selectedRace: Race,
     modifier: Modifier = Modifier
 ) {
+    RaceDetailScreenContent(selectedRace)
+}
+
+@Composable
+private fun RaceDetailScreenContent(selectedRace: Race) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,30 +41,30 @@ fun RaceDetailScreen(
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-            if (selectedRace.results.isEmpty()) {
-                NoResults()
-            }
-            else {
-                LazyColumn(
-                    modifier = Modifier
-                        .height(300.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black
-                        )
-                ) {
-                    itemsIndexed(selectedRace.results) { index, result ->
-                        RaceResultItem(result)
-                    }
-                }
-            }
+//            if (selectedRace.results.isEmpty()) {
+//                NoResults()
+//            }
+//            else {
+//                LazyColumn(
+//                    modifier = Modifier
+//                        .height(300.dp)
+//                        .border(
+//                            width = 1.dp,
+//                            color = Color.Black
+//                        )
+//                ) {
+//                    itemsIndexed(selectedRace.results) { index, result ->
+//                        RaceResultItem(result)
+//                    }
+//                }
+//            }
         }
     }
 }
 
 @Composable
 private fun NoResults() {
-    Box (
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp),

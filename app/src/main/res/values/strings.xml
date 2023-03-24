@@ -38,4 +38,12 @@
     <string name="enter_points">Enter points</string>
     <string name="potential_points_to_win">Potential points to win (x1.2):</string>
     <string name="submit">Submit prediction</string>
+    <string name="loading">Loading...</string>
+    <string name="loading_failed">Failed to load data!</string>
+    <string name="practice_2">Practice 2</string>
+    <string name="practice_1">Practice 1</string>
+    <string name="practice_3">Practice 3</string>
+    <string name="qualifying">Qualifying</string>
+    <string name="race">Race</string>
+    <string name="sprint">Sprint</string>
 </resources>

@@ -1,14 +1,62 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.model.Race
+import be.howest.jasperdesnyder.formulaone.network.FormulaOneApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
+
+sealed interface FormulaOneApiUiState {
+    data class Success(val races: List<Race>) : FormulaOneApiUiState
+    object Error : FormulaOneApiUiState
+    object Loading : FormulaOneApiUiState
+}
 
 class FormulaOneViewModel : ViewModel() {
+
+    var formulaOneApiUiState: FormulaOneApiUiState by mutableStateOf(FormulaOneApiUiState.Loading)
+        private set
+
+    init {
+        getRaces()
+    }
+
+    private fun getRaces() {
+        viewModelScope.launch {
+            formulaOneApiUiState =
+                try {
+//                    val mrData: MRData = FormulaOneApi.retrofitService.getMRData()
+//                    val raceData = mrData.raceData
+//                    val races = raceData.races
+
+                    val apiResponse = FormulaOneApi.retrofitService.getMRData()
+                    val mrData = apiResponse.MRData
+                    val raceTable = mrData?.RaceTable
+                    val races = raceTable?.Races
+
+                    Log.d("FormulaOneViewModel", "mrdata: $mrData")
+                    Log.d("FormulaOneViewModel", "racetable: $raceTable")
+
+
+                    FormulaOneApiUiState.Success(races!!)
+                } catch (e: IOException) {
+                    FormulaOneApiUiState.Error
+                } catch (e: HttpException) {
+                    FormulaOneApiUiState.Error
+                }
+        }
+    }
+
     private val _uiState = MutableStateFlow(FormulaOneUiState())
     val uiState: StateFlow<FormulaOneUiState> = _uiState.asStateFlow()
 

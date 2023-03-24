@@ -1,8 +1,8 @@
 package be.howest.jasperdesnyder.formulaone.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Session(
-    val title: String,
-    val day: String,
-    val startTime: String,
-    val endTime: String? = null
+    @SerializedName("date" ) var date : String? = null,
+    @SerializedName("time" ) var time : String? = null
 )

@@ -1,11 +1,14 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -13,57 +16,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import be.howest.jasperdesnyder.formulaone.ErrorScreen
+import be.howest.jasperdesnyder.formulaone.LoadingScreen
+import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
-import be.howest.jasperdesnyder.formulaone.repositories.RaceRepo
-import kotlin.random.Random
+import be.howest.jasperdesnyder.formulaone.model.Session
+import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StartScreen(
+    formulaOneApiUiState: FormulaOneApiUiState,
     modifier: Modifier = Modifier
 ) {
+    when (formulaOneApiUiState) {
+        is FormulaOneApiUiState.Loading -> LoadingScreen()
+        is FormulaOneApiUiState.Error -> ErrorScreen()
+        is FormulaOneApiUiState.Success -> StartScreenContent(formulaOneApiUiState.races.random())
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun StartScreenContent(race: Race) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(15.dp)
     ) {
         Column(modifier = Modifier.align(Alignment.Center)) {
-            GeneralRaceInformation()
-
-            Session(
-                title = "Practice 1",
-                day = "Friday",
-                startTime = "14:30",
-                endTime = "15:30"
-            )
-            Session(
-                title = "Practice 2",
-                day = "Friday",
-                startTime = "18:00",
-                endTime = "19:00"
-            )
-            Session(
-                title = "Practice 3",
-                day = "Saturday",
-                startTime = "14:30",
-                endTime = "15:30"
-            )
-            Session(
-                title = "Qualifying",
-                day = "Saturday",
-                startTime = "18:00",
-                endTime = "19:00"
-            )
-            Session(
-                title = "Race",
-                day = "Sunday",
-                startTime = "18:00"
-            )
+            GeneralRaceInformation(race)
+            GenerateSessions(race)
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GeneralRaceInformation(race: Race = RaceRepo.races[Random.nextInt(RaceRepo.races.size)]) {
+fun GeneralRaceInformation(race: Race) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
@@ -72,31 +67,163 @@ fun GeneralRaceInformation(race: Race = RaceRepo.races[Random.nextInt(RaceRepo.r
             modifier = Modifier.padding(end = 10.dp)
         ) {
             Text(
-                text = stringResource(race.title),
+                text = race.Circuit?.circuitId!!.replace("_", " ").replaceFirstChar { it.uppercase() },
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
             Text(
-                text = race.date,
+                text = prettifyDate(race.FirstPractice?.date!!, race.date!!),
                 fontSize = 24.sp,
                 fontStyle = FontStyle.Italic
             )
         }
         Image(
-            painter = painterResource(race.trackLayoutRes),
-            contentDescription = stringResource(race.title) + " track layout"
+            painter = painterResource(getImageBasedOnName(race.Circuit?.circuitId!!)),
+            contentDescription = race.raceName!! + " track layout"
         )
     }
 }
 
+fun getImageBasedOnName(name: String): Int {
+    return when (name) {
+        "bahrain" -> R.drawable.bahrain
+        "jeddah" -> R.drawable.saudi_arabia
+        "albert_park" -> R.drawable.australia
+        "baku" -> R.drawable.azerbaijan
+        "miami" -> R.drawable.miami
+        "imola" -> R.drawable.imola
+        "monaco" -> R.drawable.monaco
+        "catalunya" -> R.drawable.spain
+        "villeneuve" -> R.drawable.canada
+        "red_bull_ring" -> R.drawable.austria
+        "silverstone" -> R.drawable.britain
+        "hungaroring" -> R.drawable.hungary
+        "spa" -> R.drawable.belgium
+        "zandvoort" -> R.drawable.netherlands
+        "monza" -> R.drawable.monza
+        "marina_bay" -> R.drawable.singapore
+        "suzuka" -> R.drawable.japan
+        "losail" -> R.drawable.qatar
+        "americas" -> R.drawable.united_states
+        "rodriguez" -> R.drawable.mexico
+        "interlagos" -> R.drawable.brazil
+        "vegas" -> R.drawable.las_vegas
+        "yas_marina" -> R.drawable.abu_dhabi
+        else -> R.drawable.bahrain
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun prettifyDate(firstDate: String, lastDate: String): String {
+    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+    val first = LocalDate.parse(firstDate)
+    val last = LocalDate.parse(lastDate)
+    return first.format(formatter) + " - " + last.format(formatter)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun GenerateSessions(race: Race) {
+    if (race.sprint == null) GenerateNormalSessions(race)
+    else GenerateSprintSessions(race)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun GenerateNormalSessions(race: Race) {
+    Session(
+        title = stringResource(R.string.practice_1),
+        session = race.FirstPractice!!
+    )
+
+    Session(
+        title = stringResource(R.string.practice_2),
+        session = race.SecondPractice!!
+    )
+
+    Session(
+        title = stringResource(R.string.practice_3),
+        session = race.ThirdPractice!!
+    )
+
+    Session(
+        title = stringResource(R.string.qualifying),
+        session = race.Qualifying!!
+    )
+
+    Session(
+        title = stringResource(R.string.race),
+        race = race
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun GenerateSprintSessions(race: Race) {
+    Session(
+        title = stringResource(R.string.practice_1),
+        session = race.FirstPractice!!
+    )
+
+    Session(
+        title = stringResource(R.string.qualifying),
+        session = race.Qualifying!!
+    )
+
+    Session(
+        title = stringResource(R.string.practice_2),
+        session = race.SecondPractice!!
+    )
+
+    Session(
+        title = stringResource(R.string.sprint),
+        session = race.sprint!!
+    )
+
+    Session(
+        title = stringResource(R.string.race),
+        race = race
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getDateFromSession(date: String): String {
+    return LocalDate.parse(date).dayOfWeek.toString().lowercase()
+        .replaceFirstChar { it.uppercase() }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getTimeInLocalFormat(time: String): String {
+    val original = LocalTime.parse(time, DateTimeFormatter.ISO_OFFSET_TIME)
+
+    val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        .withLocale(Locale.GERMAN)
+
+    return formatter.format(original)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Session(
     title: String,
-    day: String,
-    startTime: String,
-    endTime: String? = null
+    session: Session? = null,
+    race: Race? = null
 ) {
+    val time: String
+    val date: String
+
+    when (race) {
+        null -> {
+            time = getTimeInLocalFormat(session?.time!!)
+            date = getDateFromSession(session.date!!)
+        }
+        else -> {
+            time = getTimeInLocalFormat(race.time!!)
+            date = getDateFromSession(race.date!!)
+        }
+    }
+
     Column(
         modifier = Modifier.padding(vertical = 10.dp)
     ) {
@@ -111,18 +238,13 @@ private fun Session(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = day,
+                text = date,
                 fontSize = 24.sp,
                 fontStyle = FontStyle.Italic
             )
 
-            if (endTime != null)
-                Text(
-                    text = "$startTime - $endTime",
-                    fontSize = 24.sp
-                )
-            else Text(
-                text = startTime,
+            Text(
+                text = time,
                 fontSize = 24.sp
             )
         }

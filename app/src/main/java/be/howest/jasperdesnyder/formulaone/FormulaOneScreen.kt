@@ -5,16 +5,17 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,12 +90,15 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             modifier = modifier.padding(innerPadding)
         ) {
             composable(route = FormulaOneScreen.Start.name) {
-                StartScreen()
+                StartScreen(
+                    formulaOneApiUiState = viewModel.formulaOneApiUiState
+                )
             }
 
             composable(route = FormulaOneScreen.Calendar.name) {
                 CalendarScreen(
                     viewModel = viewModel,
+                    formulaOneApiUiState = viewModel.formulaOneApiUiState,
                     onRaceClicked = {
                         navController.navigate(FormulaOneScreen.RaceDetail.name)
                     }
@@ -103,20 +107,24 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
 
             composable(route = FormulaOneScreen.RaceDetail.name) {
                 RaceDetailScreen(
-                    selectedRace = uiState.selectedRace
+                    selectedRace = uiState.selectedRace!!
                 )
             }
 
+            // TODO: Implement standings with API
             composable(route = FormulaOneScreen.DriverStandings.name) {
                 DriverStandingsScreen(
+                    formulaOneApiUiState = viewModel.formulaOneApiUiState,
                     onConstructorStandingsClicked = {
                         navController.navigate(FormulaOneScreen.ConstructorStandings.name)
                     }
                 )
             }
 
+            // TODO: Implement standings with API
             composable(route = FormulaOneScreen.ConstructorStandings.name) {
                 ConstructorStandingsScreen(
+                    formulaOneApiUiState = viewModel.formulaOneApiUiState,
                     onDriverStandingsClicked = {
                         navController.navigate(FormulaOneScreen.DriverStandings.name)
                     }
@@ -141,7 +149,8 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                         navController.navigate(FormulaOneScreen.Predictions.name)
                     },
                     onWebsiteClicked = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.formula1.com"))
+                        val intent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://www.formula1.com"))
                         launcher.launch(intent)
                     }
                 )
@@ -149,6 +158,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
 
             composable(route = FormulaOneScreen.Predictions.name) {
                 PredictionScreen(
+                    formulaOneApiUiState = viewModel.formulaOneApiUiState,
                     uiState = uiState,
                     onSubmitClicked = {
                         navController.navigate(FormulaOneScreen.Predictions.name)
@@ -186,4 +196,28 @@ fun FormulaOneTopBar(
             }
         }
     )
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(R.drawable.australia),
+            contentDescription = stringResource(R.string.loading)
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Text(stringResource(R.string.loading_failed))
+    }
 }
