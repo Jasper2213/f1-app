@@ -65,27 +65,6 @@ private fun CalendarScreenContent(
     }
 }
 
-private fun getDrawableFromName(name: String): Int {
-    return when (name) {
-        "australia" -> R.drawable.australia
-        "bahrain" -> R.drawable.bahrain
-        "azerbaijan" -> R.drawable.azerbaijan
-        "spain" -> R.drawable.spain
-        "monaco" -> R.drawable.monaco
-        "canada" -> R.drawable.canada
-        "austria" -> R.drawable.austria
-        "britain" -> R.drawable.britain
-        "hungary" -> R.drawable.hungary
-        "belgium" -> R.drawable.belgium
-        "singapore" -> R.drawable.singapore
-        "japan" -> R.drawable.japan
-        "mexico" -> R.drawable.mexico
-        "brazil" -> R.drawable.brazil
-        "abu_dhabi" -> R.drawable.abu_dhabi
-        else -> R.drawable.australia
-    }
-}
-
 @Composable
 private fun RaceItem(
     title: String,
