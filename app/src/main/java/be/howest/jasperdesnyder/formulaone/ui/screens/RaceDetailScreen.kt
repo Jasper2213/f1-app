@@ -1,5 +1,7 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +18,7 @@ import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.model.Result
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RaceDetailScreen(
     selectedRace: Race,
@@ -24,6 +27,7 @@ fun RaceDetailScreen(
     RaceDetailScreenContent(selectedRace)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun RaceDetailScreenContent(selectedRace: Race) {
     Box(
