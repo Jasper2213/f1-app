@@ -1,5 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -62,7 +64,8 @@ private fun PredictionScreenContent(
 
     var usedPoints by rememberSaveable { mutableStateOf(0.0) }
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
 
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
                 else Icons.Filled.KeyboardArrowDown
@@ -74,6 +77,7 @@ private fun PredictionScreenContent(
             .fillMaxSize()
             .padding(16.dp),
     ) {
+        // Current amount of points
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -91,6 +95,7 @@ private fun PredictionScreenContent(
             )
         }
 
+        // Select driver
         Column {
             Text(
                 text = "Who will win the ${uiState.nextRace?.raceName} Grand Prix?",
@@ -107,7 +112,12 @@ private fun PredictionScreenContent(
                         textFieldSize =
                             coordinates.size.toSize()  // Makes the dropdown menu the same width as the text field
                     },
-                label = { Text(stringResource(R.string.select_driver)) },
+                label = {
+                    Text(
+                        stringResource(R.string.select_driver),
+                        fontSize = 18.sp
+                    )
+                },
                 trailingIcon = {
                     Icon(
                         imageVector = icon,
@@ -126,17 +136,26 @@ private fun PredictionScreenContent(
                     .height(300.dp)
             ) {
                 DriverRepo.drivers.sortedBy { driver -> driver.points }.reversed()
-                    .forEach { driver ->
-                        DropdownMenuItem(onClick = {
-                            selectedDriver = driver.name
-                            expanded = false
-                        }) {
-                            Text(text = driver.name)
+                    .forEachIndexed { index, driver ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedDriver = driver.name
+                                expanded = false
+                            },
+                            modifier = Modifier
+                                .background(
+                                    color = if (index % 2 == 0) Color.LightGray else Color.White
+                                )
+                        ) {
+                            Text(text = driver.name, color = MaterialTheme.colors.onSecondary)
                         }
+                        if (index < DriverRepo.drivers.size - 1)
+                            Divider(color = Color.Black, thickness = 1.dp)
                     }
             }
         }
 
+        // Points to use
         Column {
             Text(
                 text = stringResource(R.string.points_to_use),
@@ -157,7 +176,12 @@ private fun PredictionScreenContent(
                         }
                     viewModel.updateUsedPoints(usedPoints)
                 },
-                label = { Text(stringResource(R.string.enter_points)) },
+                label = {
+                    Text(
+                        stringResource(R.string.enter_points),
+                        fontSize = 16.sp
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
@@ -166,6 +190,7 @@ private fun PredictionScreenContent(
             )
         }
 
+        // Potential points to win
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -184,18 +209,32 @@ private fun PredictionScreenContent(
 
         Button(
             onClick = {
-                showDialog = true
+                if (usedPoints != 0.0 &&
+                    selectedDriver.isNotEmpty() &&
+                    usedPoints <= uiState.availablePoints
+                ) {
+                    showConfirmDialog = true
+                } else showErrorDialog = true
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = uiState.predictionsEnabled
+            enabled = uiState.predictionsEnabled,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor =
+                    if (uiState.predictionsEnabled) MaterialTheme.colors.primary
+                    else Color.Gray
+            )
         ) {
-            Text(text = stringResource(R.string.submit))
+            Text(
+                text = stringResource(R.string.submit),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
         }
     }
 
-    if (showDialog) {
+    if (showConfirmDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showConfirmDialog = false },
             title = { Text("Confirm prediction?") },
             text = { Text("This cannot be undone!") },
             confirmButton = {
@@ -212,16 +251,31 @@ private fun PredictionScreenContent(
 
                     onSubmitClicked()
 
-                    showDialog = false
+                    showConfirmDialog = false
                 }) {
                     Text("Confirm")
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
-                    showDialog = false
+                    showConfirmDialog = false
                 }) {
                     Text("Dismiss")
+                }
+            }
+        )
+    }
+
+    if (showErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showErrorDialog = false },
+            title = { Text("Error") },
+            text = { Text("Please fill in all the necessary fields, and make sure you have enough points!") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showErrorDialog = false
+                }) {
+                    Text("Close")
                 }
             }
         )

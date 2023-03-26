@@ -1,11 +1,14 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -79,7 +82,21 @@ private fun DriverItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp),
+            .padding(vertical = 5.dp)
+            .background(
+                color = MaterialTheme.colors.surface,
+                shape = MaterialTheme.shapes.small
+            )
+            .shadow(
+                elevation = 100.dp,
+                ambientColor = Color.Gray,
+                spotColor = Color.Gray,
+                shape = MaterialTheme.shapes.small)
+            .border(
+                width = 1.dp,
+                color = Color.Gray,
+                shape = MaterialTheme.shapes.small
+            ),
         elevation = 5.dp
     ) {
         Row(

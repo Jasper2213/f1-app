@@ -10,6 +10,7 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -67,25 +69,10 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             )
         },
         bottomBar = {
-            BottomNavigation(
-                modifier = Modifier.height(60.dp)
-            ) {
-                NavItemsRepo.items.forEach { navItem ->
-                    BottomNavigationItem(
-                        selected = currentScreen == navItem.route,
-                        onClick = {
-                            navController.navigate(navItem.route.name)
-                        },
-                        icon = {
-                            Icon(
-                                navItem.icon,
-                                contentDescription = navItem.label,
-                                modifier = Modifier.size(40.dp)
-                            )
-                        }
-                    )
-                }
-            }
+            FormulaOneBottomBar(
+                currentScreen,
+                navController
+            )
         }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
@@ -93,7 +80,9 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
         NavHost(
             navController = navController,
             startDestination = FormulaOneScreen.Start.name,
-            modifier = modifier.padding(innerPadding)
+            modifier = modifier
+                .padding(innerPadding)
+                .background(MaterialTheme.colors.background)
         ) {
             composable(route = FormulaOneScreen.Start.name) {
                 StartScreen(
@@ -190,7 +179,7 @@ fun FormulaOneTopBar(
                 fontSize = 28.sp
             )
         },
-        modifier = modifier,
+        modifier = modifier.background(MaterialTheme.colors.primary),
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
@@ -202,6 +191,34 @@ fun FormulaOneTopBar(
             }
         }
     )
+}
+
+@Composable
+private fun FormulaOneBottomBar(
+    currentScreen: FormulaOneScreen,
+    navController: NavHostController
+) {
+    BottomNavigation(
+        modifier = Modifier
+            .height(60.dp)
+            .background(MaterialTheme.colors.background)
+    ) {
+        NavItemsRepo.items.forEach { navItem ->
+            BottomNavigationItem(
+                selected = currentScreen == navItem.route,
+                onClick = {
+                    navController.navigate(navItem.route.name)
+                },
+                icon = {
+                    Icon(
+                        navItem.icon,
+                        contentDescription = navItem.label,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            )
+        }
+    }
 }
 
 @Composable
