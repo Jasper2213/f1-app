@@ -30,7 +30,10 @@ import be.howest.jasperdesnyder.formulaone.repositories.DriverRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 
-// TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
+/*
+    TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
+            Store state in database?
+ */
 
 @Composable
 fun PredictionScreen(

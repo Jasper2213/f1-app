@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,18 +10,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import be.howest.jasperdesnyder.formulaone.ErrorScreen
 import be.howest.jasperdesnyder.formulaone.LoadingScreen
-import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
-import kotlin.reflect.typeOf
-import androidx.compose.foundation.layout.R as R1
 
 @Composable
 fun CalendarScreen(

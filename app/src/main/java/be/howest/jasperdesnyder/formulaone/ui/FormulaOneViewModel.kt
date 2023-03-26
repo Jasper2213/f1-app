@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
-import java.text.Normalizer.Form
 
 sealed interface FormulaOneApiUiState {
     data class Success(val races: List<Race>, val nextRace: Race) : FormulaOneApiUiState
