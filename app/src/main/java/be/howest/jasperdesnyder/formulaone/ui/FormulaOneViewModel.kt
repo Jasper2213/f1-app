@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,18 +34,18 @@ class FormulaOneViewModel : ViewModel() {
             formulaOneApiUiState =
                 try {
                     var apiResponse = FormulaOneApi.retrofitService.getCalendar()
-                    val mrData = apiResponse.MRData
+                    val mrData = apiResponse.mrData
 
                     apiResponse = FormulaOneApi.retrofitService.getNextRace()
-                    val nextRace = apiResponse.MRData?.RaceTable?.Races?.get(0)
+                    val nextRace = apiResponse.mrData?.raceTable?.races?.get(0)
 
                     apiResponse = FormulaOneApi.retrofitService.getResults()
-                    val results = apiResponse.MRData?.RaceTable?.Races
+                    val results = apiResponse.mrData?.raceTable?.races
 
-                    for (race in mrData?.RaceTable?.Races!!)
+                    for (race in mrData?.raceTable?.races!!)
                         for (result in results!!)
                             if (race.raceName == result.raceName)
-                                race.Results = result.Results
+                                race.results = result.results
 
                     FormulaOneApiUiState.Success(
                         formulaOneData = mrData,

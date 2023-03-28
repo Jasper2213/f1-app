@@ -34,7 +34,7 @@ fun CalendarScreen(
     when (formulaOneApiUiState) {
         is FormulaOneApiUiState.Loading -> LoadingScreen()
         is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> CalendarScreenContent(formulaOneApiUiState.formulaOneData.RaceTable?.Races!!, viewModel, onRaceClicked)
+        is FormulaOneApiUiState.Success -> CalendarScreenContent(formulaOneApiUiState.formulaOneData.raceTable?.races!!, viewModel, onRaceClicked)
     }
 }
 
@@ -56,9 +56,9 @@ private fun CalendarScreenContent(
                     })
             ) {
                 RaceItem(
-                    title = race.Circuit?.circuitId!!,
+                    title = race.circuit?.circuitId!!,
                     date = race.date!!,
-                    trackLayoutRes = getImageBasedOnName(race.Circuit?.circuitId!!)
+                    trackLayoutRes = getImageBasedOnName(race.circuit?.circuitId!!)
                 )
             }
         }

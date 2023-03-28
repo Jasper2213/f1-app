@@ -65,19 +65,19 @@ fun GeneralRaceInformation(race: Race) {
             modifier = Modifier.padding(end = 10.dp)
         ) {
             Text(
-                text = race.Circuit?.circuitId!!.replace("_", " ").replaceFirstChar { it.uppercase() },
+                text = race.circuit?.circuitId!!.replace("_", " ").replaceFirstChar { it.uppercase() },
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 textDecoration = TextDecoration.Underline
             )
             Text(
-                text = prettifyDate(race.FirstPractice?.date!!, race.date!!),
+                text = prettifyDate(race.firstPractice?.date!!, race.date!!),
                 fontSize = 24.sp,
                 fontStyle = FontStyle.Italic
             )
         }
         Image(
-            painter = painterResource(getImageBasedOnName(race.Circuit?.circuitId!!)),
+            painter = painterResource(getImageBasedOnName(race.circuit?.circuitId!!)),
             contentDescription = race.raceName!! + " track layout"
         )
     }
@@ -132,22 +132,22 @@ private fun GenerateSessions(race: Race) {
 private fun GenerateNormalSessions(race: Race) {
     Session(
         title = stringResource(R.string.practice_1),
-        session = race.FirstPractice!!
+        session = race.firstPractice!!
     )
 
     Session(
         title = stringResource(R.string.practice_2),
-        session = race.SecondPractice!!
+        session = race.secondPractice!!
     )
 
     Session(
         title = stringResource(R.string.practice_3),
-        session = race.ThirdPractice!!
+        session = race.thirdPractice!!
     )
 
     Session(
         title = stringResource(R.string.qualifying),
-        session = race.Qualifying!!
+        session = race.qualifying!!
     )
 
     Session(
@@ -161,17 +161,17 @@ private fun GenerateNormalSessions(race: Race) {
 private fun GenerateSprintSessions(race: Race) {
     Session(
         title = stringResource(R.string.practice_1),
-        session = race.FirstPractice!!
+        session = race.firstPractice!!
     )
 
     Session(
         title = stringResource(R.string.qualifying),
-        session = race.Qualifying!!
+        session = race.qualifying!!
     )
 
     Session(
         title = stringResource(R.string.practice_2),
-        session = race.SecondPractice!!
+        session = race.secondPractice!!
     )
 
     Session(

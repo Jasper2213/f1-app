@@ -1,14 +1,12 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -53,7 +51,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-            if (selectedRace.Results.isEmpty()) {
+            if (selectedRace.results.isEmpty()) {
                 NoResults()
             }
             else {
@@ -66,7 +64,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                             shape = MaterialTheme.shapes.small
                         )
                 ) {
-                    itemsIndexed(selectedRace.Results) { index, result ->
+                    itemsIndexed(selectedRace.results) { index, result ->
                         Row(
                             modifier = Modifier
                                 .background(
@@ -76,7 +74,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                             RaceResultItem(index, result)
                         }
 
-                        if (index < selectedRace.Results.size - 1)
+                        if (index < selectedRace.results.size - 1)
                             Divider(color = Color.Black, thickness = 1.dp)
                     }
                 }
@@ -125,12 +123,12 @@ private fun RaceResultItem(
 
             Column {
                 Text(
-                    text = result.Driver?.givenName + " " + result.Driver?.familyName,
+                    text = result.driver?.firstName + " " + result.driver?.lastName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = result.Constructor?.name!!,
+                    text = result.constructor?.name!!,
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Italic
                 )

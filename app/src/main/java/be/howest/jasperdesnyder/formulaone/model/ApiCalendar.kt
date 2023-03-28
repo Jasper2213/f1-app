@@ -3,30 +3,30 @@ package be.howest.jasperdesnyder.formulaone.model
 import com.google.gson.annotations.SerializedName
 
 data class ApiCalendarResponse(
-    @SerializedName("MRData") var MRData : MRData? = MRData()
+    @SerializedName("MRData") var mrData : MRData? = MRData()
 )
 
 data class MRData(
-    @SerializedName("RaceTable") var RaceTable: RaceTable? = RaceTable(),
-    @SerializedName("DriverTable" ) var DriverTable : DriverTable? = DriverTable()
+    @SerializedName("RaceTable") var raceTable: RaceTable? = RaceTable(),
+    @SerializedName("DriverTable" ) var driverTable : DriverTable? = DriverTable()
 )
 
 // Calendar data
 data class RaceTable(
-    @SerializedName("Races") var Races: ArrayList<Race>  = ArrayList()
+    @SerializedName("Races") var races: ArrayList<Race>  = ArrayList()
 )
 
 data class Race(
     @SerializedName("raceName"       ) var raceName       : String?       = null,
-    @SerializedName("Circuit"        ) var Circuit        : Circuit?      = Circuit(),
+    @SerializedName("Circuit"        ) var circuit        : Circuit?      = Circuit(),
     @SerializedName("date"           ) var date           : String?       = null,
     @SerializedName("time"           ) var time           : String?       = null,
-    @SerializedName("FirstPractice"  ) var FirstPractice  : Session?      = Session(),
-    @SerializedName("SecondPractice" ) var SecondPractice : Session?      = Session(),
-    @SerializedName("ThirdPractice"  ) var ThirdPractice  : Session?      = Session(),
-    @SerializedName("Qualifying"     ) var Qualifying     : Session?      = Session(),
+    @SerializedName("FirstPractice"  ) var firstPractice  : Session?      = Session(),
+    @SerializedName("SecondPractice" ) var secondPractice : Session?      = Session(),
+    @SerializedName("ThirdPractice"  ) var thirdPractice  : Session?      = Session(),
+    @SerializedName("Qualifying"     ) var qualifying     : Session?      = Session(),
     @SerializedName("Sprint"         ) var sprint         : Session?      = null,
-    @SerializedName("Results"        ) var Results        : ArrayList<Results> = ArrayList()
+    @SerializedName("Results"        ) var results        : ArrayList<Results> = ArrayList()
 )
 
 data class Circuit(
@@ -51,13 +51,13 @@ data class Session(
 data class Results (
     @SerializedName("position"     ) var position     : String?      = null,
     @SerializedName("points"       ) var points       : String?      = null,
-    @SerializedName("Driver"       ) var Driver       : Driver?      = Driver(),
-    @SerializedName("Constructor"  ) var Constructor  : Constructor? = Constructor()
+    @SerializedName("Driver"       ) var driver       : Driver?      = Driver(),
+    @SerializedName("Constructor"  ) var constructor  : Constructor? = Constructor()
 )
 
 data class Driver (
-    @SerializedName("givenName"       ) var givenName       : String? = null,
-    @SerializedName("familyName"      ) var familyName      : String? = null,
+    @SerializedName("givenName"       ) var firstName       : String? = null,
+    @SerializedName("familyName"      ) var lastName      : String? = null,
 )
 
 data class Constructor (
@@ -66,10 +66,5 @@ data class Constructor (
 
 // Drivers data
 data class DriverTable (
-    @SerializedName("Drivers" ) var Drivers : ArrayList<Drivers> = ArrayList()
-)
-
-data class Drivers (
-    @SerializedName("givenName"       ) var givenName       : String? = null,
-    @SerializedName("familyName"      ) var familyName      : String? = null,
+    @SerializedName("Drivers" ) var drivers : ArrayList<Driver> = ArrayList()
 )

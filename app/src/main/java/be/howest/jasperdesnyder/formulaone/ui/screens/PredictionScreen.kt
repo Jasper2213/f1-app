@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.toSize
 import be.howest.jasperdesnyder.formulaone.ErrorScreen
 import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.R
-import be.howest.jasperdesnyder.formulaone.model.Drivers
+import be.howest.jasperdesnyder.formulaone.model.Driver
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -48,7 +48,7 @@ fun PredictionScreen(
     when (formulaOneApiUiState) {
         is FormulaOneApiUiState.Loading -> LoadingScreen()
         is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked, formulaOneApiUiState.formulaOneData.DriverTable?.Drivers!!)
+        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked, formulaOneApiUiState.formulaOneData.driverTable?.drivers!!)
     }
 }
 
@@ -57,7 +57,7 @@ private fun PredictionScreenContent(
     uiState: FormulaOneUiState,
     viewModel: FormulaOneViewModel,
     onSubmitClicked: () -> Unit,
-    drivers: List<Drivers>
+    drivers: List<Driver>
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedDriver by rememberSaveable { mutableStateOf("") }
@@ -140,7 +140,7 @@ private fun PredictionScreenContent(
                     .forEachIndexed { index, driver ->
                         DropdownMenuItem(
                             onClick = {
-                                selectedDriver = driver.givenName + " " + driver.familyName
+                                selectedDriver = driver.firstName + " " + driver.lastName
                                 expanded = false
                             },
                             modifier = Modifier
@@ -148,7 +148,7 @@ private fun PredictionScreenContent(
                                     color = if (index % 2 == 0) Color.LightGray else Color.White
                                 )
                         ) {
-                            Text(text = driver.givenName + " " + driver.familyName, color = MaterialTheme.colors.onSecondary)
+                            Text(text = driver.firstName + " " + driver.lastName, color = MaterialTheme.colors.onSecondary)
                         }
                         if (index < drivers.size - 1)
                             Divider(color = Color.Black, thickness = 1.dp)
