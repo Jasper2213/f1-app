@@ -228,6 +228,7 @@ private fun PredictionScreenContent(
                 text = stringResource(R.string.submit),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onPrimary
             )
         }
     }
