@@ -32,6 +32,7 @@ fun DriverStandingsScreen(
     onConstructorStandingsClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // TODO: Make this a method (Share with ConstructorStandingsScreen)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

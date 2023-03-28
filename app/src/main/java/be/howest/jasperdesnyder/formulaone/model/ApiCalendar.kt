@@ -64,13 +64,14 @@ data class Constructor (
     @SerializedName("name"          ) var name          : String? = null,
 )
 
-// Driver standings data
+// Standings data
 data class StandingsTable (
     @SerializedName("StandingsLists" ) var standingsLists : ArrayList<StandingsLists> = arrayListOf()
 )
 
 data class StandingsLists (
-    @SerializedName("DriverStandings" ) var driverStanding : ArrayList<DriverStanding> = arrayListOf()
+    @SerializedName("DriverStandings"      ) var driverStanding       : ArrayList<DriverStanding>       = arrayListOf(),
+    @SerializedName("ConstructorStandings" ) var constructorStandings : ArrayList<ConstructorStandings> = arrayListOf()
 )
 
 data class DriverStanding (
@@ -78,4 +79,11 @@ data class DriverStanding (
     @SerializedName("points"       ) var points       : String?                 = null,
     @SerializedName("Driver"       ) var driver       : Driver?                 = Driver(),
     @SerializedName("Constructors" ) var constructors : ArrayList<Constructor>  = arrayListOf()
+)
+
+data class ConstructorStandings (
+    @SerializedName("position"     ) var position     : String?      = null,
+    @SerializedName("points"       ) var points       : String?      = null,
+    @SerializedName("wins"         ) var wins         : String?      = null,
+    @SerializedName("Constructor"  ) var constructor  : Constructor? = Constructor()
 )

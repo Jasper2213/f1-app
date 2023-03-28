@@ -34,6 +34,7 @@ class FormulaOneViewModel : ViewModel() {
         viewModelScope.launch {
             formulaOneApiUiState =
                 try {
+                    // TODO: Refactor this
                     var apiResponse = FormulaOneApi.retrofitService.getCalendar()
                     val mrData = apiResponse.mrData
 
@@ -51,6 +52,10 @@ class FormulaOneViewModel : ViewModel() {
                     apiResponse = FormulaOneApi.retrofitService.getDriversStandings()
                     val driversStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
                     mrData.standingsTable?.standingsLists = driversStandings
+
+                    apiResponse = FormulaOneApi.retrofitService.getConstructorsStandings()
+                    val constructorsStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
+                    mrData.standingsTable?.standingsLists!![0].constructorStandings = constructorsStandings[0].constructorStandings
 
                     FormulaOneApiUiState.Success(
                         formulaOneData = mrData,

@@ -24,6 +24,9 @@ interface FormulaOneApiService {
 
     @GET("current/driverStandings.json")
     suspend fun getDriversStandings(): ApiCalendarResponse
+
+    @GET("current/constructorStandings.json")
+    suspend fun getConstructorsStandings(): ApiCalendarResponse
 }
 
 object FormulaOneApi {
