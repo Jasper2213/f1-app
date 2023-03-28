@@ -1,5 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,7 +16,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface FormulaOneApiUiState {
-    data class Success(val formulaOneData: MRData, val nextRace: Race/*, val results: List<List<Results>>, val drivers: List<Driver>*/) : FormulaOneApiUiState
+    data class Success(val formulaOneData: MRData, val nextRace: Race) : FormulaOneApiUiState
     object Error : FormulaOneApiUiState
     object Loading : FormulaOneApiUiState
 }
@@ -47,11 +48,13 @@ class FormulaOneViewModel : ViewModel() {
                             if (race.raceName == result.raceName)
                                 race.results = result.results
 
+                    apiResponse = FormulaOneApi.retrofitService.getDriversStandings()
+                    val driversStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
+                    mrData.standingsTable?.standingsLists = driversStandings
+
                     FormulaOneApiUiState.Success(
                         formulaOneData = mrData,
-                        nextRace = nextRace!!,
-//                        results = racesWithResults,
-//                        drivers = emptyList()
+                        nextRace = nextRace!!
                     )
                 } catch (e: IOException) {
                     FormulaOneApiUiState.Error

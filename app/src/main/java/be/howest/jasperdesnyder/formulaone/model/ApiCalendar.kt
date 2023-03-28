@@ -8,7 +8,7 @@ data class ApiCalendarResponse(
 
 data class MRData(
     @SerializedName("RaceTable") var raceTable: RaceTable? = RaceTable(),
-    @SerializedName("DriverTable" ) var driverTable : DriverTable? = DriverTable()
+    @SerializedName("StandingsTable" ) var standingsTable : StandingsTable? = StandingsTable()
 )
 
 // Calendar data
@@ -64,7 +64,18 @@ data class Constructor (
     @SerializedName("name"          ) var name          : String? = null,
 )
 
-// Drivers data
-data class DriverTable (
-    @SerializedName("Drivers" ) var drivers : ArrayList<Driver> = ArrayList()
+// Driver standings data
+data class StandingsTable (
+    @SerializedName("StandingsLists" ) var standingsLists : ArrayList<StandingsLists> = arrayListOf()
+)
+
+data class StandingsLists (
+    @SerializedName("DriverStandings" ) var driverStanding : ArrayList<DriverStanding> = arrayListOf()
+)
+
+data class DriverStanding (
+    @SerializedName("position"     ) var position     : String?                 = null,
+    @SerializedName("points"       ) var points       : String?                 = null,
+    @SerializedName("Driver"       ) var driver       : Driver?                 = Driver(),
+    @SerializedName("Constructors" ) var constructors : ArrayList<Constructor>  = arrayListOf()
 )

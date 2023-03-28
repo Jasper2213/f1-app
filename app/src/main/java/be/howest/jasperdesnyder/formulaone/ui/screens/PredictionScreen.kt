@@ -48,7 +48,9 @@ fun PredictionScreen(
     when (formulaOneApiUiState) {
         is FormulaOneApiUiState.Loading -> LoadingScreen()
         is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked, formulaOneApiUiState.formulaOneData.driverTable?.drivers!!)
+        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked,
+            formulaOneApiUiState.formulaOneData.standingsTable?.standingsLists!![0].driverStanding.map { it.driver!! }
+        )
     }
 }
 
