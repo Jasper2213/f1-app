@@ -1,12 +1,12 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
-import be.howest.jasperdesnyder.formulaone.model.Race
+import be.howest.jasperdesnyder.formulaone.model.*
 import be.howest.jasperdesnyder.formulaone.network.FormulaOneApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +16,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface FormulaOneApiUiState {
-    data class Success(val races: List<Race>, val nextRace: Race) : FormulaOneApiUiState
+    data class Success(val formulaOneData: MRData, val nextRace: Race/*, val results: List<List<Results>>, val drivers: List<Driver>*/) : FormulaOneApiUiState
     object Error : FormulaOneApiUiState
     object Loading : FormulaOneApiUiState
 }
@@ -35,14 +35,24 @@ class FormulaOneViewModel : ViewModel() {
             formulaOneApiUiState =
                 try {
                     var apiResponse = FormulaOneApi.retrofitService.getCalendar()
-                    val races = apiResponse.MRData?.RaceTable?.Races
+                    val mrData = apiResponse.MRData
 
                     apiResponse = FormulaOneApi.retrofitService.getNextRace()
                     val nextRace = apiResponse.MRData?.RaceTable?.Races?.get(0)
 
+                    apiResponse = FormulaOneApi.retrofitService.getResults()
+                    val results = apiResponse.MRData?.RaceTable?.Races
+
+                    for (race in mrData?.RaceTable?.Races!!)
+                        for (result in results!!)
+                            if (race.raceName == result.raceName)
+                                race.Results = result.Results
+
                     FormulaOneApiUiState.Success(
-                        races = races!!,
-                        nextRace = nextRace!!
+                        formulaOneData = mrData,
+                        nextRace = nextRace!!,
+//                        results = racesWithResults,
+//                        drivers = emptyList()
                     )
                 } catch (e: IOException) {
                     FormulaOneApiUiState.Error

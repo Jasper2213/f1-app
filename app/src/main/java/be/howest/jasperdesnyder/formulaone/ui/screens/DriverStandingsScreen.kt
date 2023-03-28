@@ -20,8 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.howest.jasperdesnyder.formulaone.model.Driver
-import be.howest.jasperdesnyder.formulaone.repositories.DriverRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 
 @Composable
@@ -50,94 +48,94 @@ fun DriverStandingsScreen(
 
         Line()
 
-        LazyColumn {
-            itemsIndexed(DriverRepo.drivers) { index, driver ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 15.dp)
-                ) {
-                    DriverItem(
-                        driver = driver,
-                        number = index + 1
-                    )
-                }
-            }
-        }
+//        LazyColumn {
+//            itemsIndexed(DriverRepo.drivers) { index, driver ->
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(horizontal = 15.dp)
+//                ) {
+//                    DriverItem(
+//                        driver = driver,
+//                        number = index + 1
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
-@Composable
-private fun DriverItem(
-    driver: Driver,
-    number: Int,
-    modifier: Modifier = Modifier
-) {
-    val prettyNumber = if (number < 10) {
-        "0$number"
-    } else {
-        "$number"
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .background(
-                color = MaterialTheme.colors.surface,
-                shape = MaterialTheme.shapes.small
-            )
-            .shadow(
-                elevation = 100.dp,
-                ambientColor = Color.Gray,
-                spotColor = Color.Gray,
-                shape = MaterialTheme.shapes.small)
-            .border(
-                width = 1.dp,
-                color = Color.Gray,
-                shape = MaterialTheme.shapes.small
-            ),
-        elevation = 5.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = prettyNumber,
-                    fontSize = 22.sp,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.padding(end = 20.dp)
-                )
-
-                Column {
-                    Text(
-                        text = driver.name,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = driver.teamName,
-                        fontSize = 22.sp,
-                        fontStyle = FontStyle.Italic,
-                    )
-                }
-            }
-
-            Text(
-                text = "${driver.points}",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
+//@Composable
+//private fun DriverItem(
+//    driver: Driver,
+//    number: Int,
+//    modifier: Modifier = Modifier
+//) {
+//    val prettyNumber = if (number < 10) {
+//        "0$number"
+//    } else {
+//        "$number"
+//    }
+//
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 5.dp)
+//            .background(
+//                color = MaterialTheme.colors.surface,
+//                shape = MaterialTheme.shapes.small
+//            )
+//            .shadow(
+//                elevation = 100.dp,
+//                ambientColor = Color.Gray,
+//                spotColor = Color.Gray,
+//                shape = MaterialTheme.shapes.small)
+//            .border(
+//                width = 1.dp,
+//                color = Color.Gray,
+//                shape = MaterialTheme.shapes.small
+//            ),
+//        elevation = 5.dp
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(15.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Text(
+//                    text = prettyNumber,
+//                    fontSize = 22.sp,
+//                    textDecoration = TextDecoration.Underline,
+//                    modifier = Modifier.padding(end = 20.dp)
+//                )
+//
+//                Column {
+//                    Text(
+//                        text = driver.name,
+//                        fontSize = 26.sp,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                    Text(
+//                        text = driver.teamName,
+//                        fontSize = 22.sp,
+//                        fontStyle = FontStyle.Italic,
+//                    )
+//                }
+//            }
+//
+//            Text(
+//                text = "${driver.points}",
+//                fontSize = 22.sp,
+//                fontWeight = FontWeight.Bold
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun StandingsSelector(

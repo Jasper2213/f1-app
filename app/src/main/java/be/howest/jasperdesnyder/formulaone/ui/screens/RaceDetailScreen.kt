@@ -1,8 +1,16 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
-import be.howest.jasperdesnyder.formulaone.model.Result
+import be.howest.jasperdesnyder.formulaone.model.Results
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -45,23 +53,34 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-//            if (selectedRace.results.isEmpty()) {
-//                NoResults()
-//            }
-//            else {
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .height(300.dp)
-//                        .border(
-//                            width = 1.dp,
-//                            color = Color.Black
-//                        )
-//                ) {
-//                    itemsIndexed(selectedRace.results) { index, result ->
-//                        RaceResultItem(result)
-//                    }
-//                }
-//            }
+            if (selectedRace.Results.isEmpty()) {
+                NoResults()
+            }
+            else {
+                LazyColumn(
+                    modifier = Modifier
+                        .height(300.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = MaterialTheme.shapes.small
+                        )
+                ) {
+                    itemsIndexed(selectedRace.Results) { index, result ->
+                        Row(
+                            modifier = Modifier
+                                .background(
+                                    color = if (index % 2 == 0) Color.LightGray else Color.White
+                                )
+                        ) {
+                            RaceResultItem(index, result)
+                        }
+
+                        if (index < selectedRace.Results.size - 1)
+                            Divider(color = Color.Black, thickness = 1.dp)
+                    }
+                }
+            }
         }
     }
 }
@@ -84,7 +103,10 @@ private fun NoResults() {
 }
 
 @Composable
-private fun RaceResultItem(result: Result) {
+private fun RaceResultItem(
+    index: Int,
+    result: Results
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,12 +125,12 @@ private fun RaceResultItem(result: Result) {
 
             Column {
                 Text(
-                    text = result.driver,
+                    text = result.Driver?.givenName + " " + result.Driver?.familyName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = result.team,
+                    text = result.Constructor?.name!!,
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Italic
                 )

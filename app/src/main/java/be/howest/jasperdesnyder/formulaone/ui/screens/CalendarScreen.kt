@@ -34,7 +34,7 @@ fun CalendarScreen(
     when (formulaOneApiUiState) {
         is FormulaOneApiUiState.Loading -> LoadingScreen()
         is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> CalendarScreenContent(formulaOneApiUiState.races, viewModel, onRaceClicked)
+        is FormulaOneApiUiState.Success -> CalendarScreenContent(formulaOneApiUiState.formulaOneData.RaceTable?.Races!!, viewModel, onRaceClicked)
     }
 }
 
