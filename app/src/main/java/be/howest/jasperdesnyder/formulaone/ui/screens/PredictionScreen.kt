@@ -36,7 +36,6 @@ import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
     TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
             Store state in database?
  */
-// TODO: Fix `who will win the null grand prix` bug
 
 @Composable
 fun PredictionScreen(
@@ -102,7 +101,7 @@ private fun PredictionScreenContent(
         // Select driver
         Column {
             Text(
-                text = "Who will win the ${uiState.nextRace?.raceName} Grand Prix?",
+                text = "Who will win the ${uiState.nextRace?.raceName}?",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center

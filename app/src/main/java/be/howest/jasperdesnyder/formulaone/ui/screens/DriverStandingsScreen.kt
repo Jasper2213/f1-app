@@ -32,26 +32,13 @@ fun DriverStandingsScreen(
     onConstructorStandingsClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO: Make this a method (Share with ConstructorStandingsScreen)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            StandingsSelector(
-                text = "Drivers",
-                isBold = true
-            )
-            StandingsSelector(
-                text = "Constructors",
-                onClick = onConstructorStandingsClicked,
-                isBold = false
-            )
-        }
-
-        Line()
+        StandingsTopBar(
+            onConstructorStandingsClicked = onConstructorStandingsClicked,
+            driversSelected = true
+        )
 
         when (formulaOneApiUiState) {
             is FormulaOneApiUiState.Loading -> LoadingScreen()
@@ -59,6 +46,31 @@ fun DriverStandingsScreen(
             is FormulaOneApiUiState.Success -> DriverStandingsScreenContent(formulaOneApiUiState.formulaOneData.standingsTable)
         }
     }
+}
+
+@Composable
+fun StandingsTopBar(
+    onDriverStandingsClicked: () -> Unit = {},
+    onConstructorStandingsClicked: () -> Unit = {},
+    driversSelected: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        StandingsSelector(
+            text = "Drivers",
+            onClick = onDriverStandingsClicked,
+            isBold = driversSelected
+        )
+        StandingsSelector(
+            text = "Constructors",
+            onClick = onConstructorStandingsClicked,
+            isBold = !driversSelected
+        )
+    }
+
+    Line()
 }
 
 @Composable

@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,32 +33,18 @@ class FormulaOneViewModel : ViewModel() {
         viewModelScope.launch {
             formulaOneApiUiState =
                 try {
-                    // TODO: Refactor this
-                    var apiResponse = FormulaOneApi.retrofitService.getCalendar()
-                    val mrData = apiResponse.mrData
+                    val mrData = getMrData()
 
-                    apiResponse = FormulaOneApi.retrofitService.getNextRace()
-                    val nextRace = apiResponse.mrData?.raceTable?.races?.get(0)
+                    val nextRace = getNextRace()
+                    _uiState.value.nextRace = nextRace
 
-                    apiResponse = FormulaOneApi.retrofitService.getResults()
-                    val results = apiResponse.mrData?.raceTable?.races
-
-                    for (race in mrData?.raceTable?.races!!)
-                        for (result in results!!)
-                            if (race.raceName == result.raceName)
-                                race.results = result.results
-
-                    apiResponse = FormulaOneApi.retrofitService.getDriversStandings()
-                    val driversStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
-                    mrData.standingsTable?.standingsLists = driversStandings
-
-                    apiResponse = FormulaOneApi.retrofitService.getConstructorsStandings()
-                    val constructorsStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
-                    mrData.standingsTable?.standingsLists!![0].constructorStandings = constructorsStandings[0].constructorStandings
+                    addResultsToMrData(mrData)
+                    addDriversStandingsToMrData(mrData)
+                    addConstructorsStandingsToMrData(mrData)
 
                     FormulaOneApiUiState.Success(
                         formulaOneData = mrData,
-                        nextRace = nextRace!!
+                        nextRace = nextRace
                     )
                 } catch (e: IOException) {
                     FormulaOneApiUiState.Error
@@ -105,3 +90,40 @@ class FormulaOneViewModel : ViewModel() {
 //    }
 }
 
+private suspend fun getNextRace(): Race {
+    val apiResponse = FormulaOneApi.retrofitService.getNextRace()
+    val nextRace = apiResponse.mrData?.raceTable?.races?.get(0)
+
+    return nextRace!!
+}
+
+private suspend fun getMrData(): MRData {
+    val apiResponse = FormulaOneApi.retrofitService.getCalendar()
+    val mrData = apiResponse.mrData
+
+    return mrData!!
+}
+
+private suspend fun addResultsToMrData(mrData: MRData) {
+    val apiResponse = FormulaOneApi.retrofitService.getResults()
+    val results = apiResponse.mrData?.raceTable?.races
+
+    for (race in mrData.raceTable?.races!!)
+        for (result in results!!)
+            if (race.raceName == result.raceName)
+                race.results = result.results
+}
+
+private suspend fun addDriversStandingsToMrData(mrData: MRData) {
+    val apiResponse = FormulaOneApi.retrofitService.getDriversStandings()
+    val driversStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
+
+    mrData.standingsTable?.standingsLists = driversStandings
+}
+
+private suspend fun addConstructorsStandingsToMrData(mrData: MRData) {
+    val apiResponse = FormulaOneApi.retrofitService.getConstructorsStandings()
+    val constructorsStandings = apiResponse.mrData?.standingsTable?.standingsLists!!
+
+    mrData.standingsTable?.standingsLists!![0].constructorStandings = constructorsStandings[0].constructorStandings
+}

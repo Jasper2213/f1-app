@@ -57,7 +57,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
             else {
                 LazyColumn(
                     modifier = Modifier
-                        .height(300.dp)
+                        .height(400.dp)
                         .border(
                             width = 1.dp,
                             color = Color.Black,

@@ -6,7 +6,7 @@ data class FormulaOneUiState (
 
     /* Values used for predictions */
     var availablePoints: Double = 1200.00,
-    var selectedDriver: String? = null,      // Only keep first name
+    var selectedDriver: String? = null,      // Only need to keep first name for this to function
     var usedPoints: Double = 0.00,
     var nextRace: Race? = null,
     var predictionsEnabled: Boolean = true

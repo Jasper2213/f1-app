@@ -31,22 +31,10 @@ fun ConstructorStandingsScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            StandingsSelector(
-                text = "Drivers",
-                onClick = onDriverStandingsClicked,
-                isBold = false
-            )
-            StandingsSelector(
-                text = "Constructors",
-                isBold = true
-            )
-        }
-
-        Line()
+        StandingsTopBar(
+            onDriverStandingsClicked = onDriverStandingsClicked,
+            driversSelected = false
+        )
 
         when (formulaOneApiUiState) {
             is FormulaOneApiUiState.Loading -> LoadingScreen()
