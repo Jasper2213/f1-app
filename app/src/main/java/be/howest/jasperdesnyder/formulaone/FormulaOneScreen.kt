@@ -1,8 +1,15 @@
 package be.howest.jasperdesnyder.formulaone
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.provider.CalendarContract
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -22,9 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,6 +45,7 @@ import androidx.navigation.compose.rememberNavController
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 import be.howest.jasperdesnyder.formulaone.ui.screens.*
+import java.util.*
 
 enum class FormulaOneScreen(@StringRes val title: Int) {
     Start(title = R.string.next_race),
@@ -106,7 +118,6 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                 )
             }
 
-            // TODO: Implement standings with API
             composable(route = FormulaOneScreen.DriverStandings.name) {
                 DriverStandingsScreen(
                     formulaOneApiUiState = viewModel.formulaOneApiUiState,
@@ -116,7 +127,6 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                 )
             }
 
-            // TODO: Implement standings with API
             composable(route = FormulaOneScreen.ConstructorStandings.name) {
                 ConstructorStandingsScreen(
                     formulaOneApiUiState = viewModel.formulaOneApiUiState,

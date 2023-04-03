@@ -1,13 +1,25 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import android.annotation.SuppressLint
+import android.content.ContentUris
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.CalendarContract
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -15,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import be.howest.jasperdesnyder.formulaone.ErrorScreen
 import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.R
@@ -54,32 +67,100 @@ private fun StartScreenContent(race: Race) {
     }
 }
 
+@SuppressLint("QueryPermissionsNeeded")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GeneralRaceInformation(race: Race) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(end = 10.dp)
+    val context = LocalContext.current
+
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(end = 10.dp)
+            ) {
+                Text(
+                    text = race.circuit?.circuitId!!.replace("_", " ")
+                        .replaceFirstChar { it.uppercase() },
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    textDecoration = TextDecoration.Underline
+                )
+                Text(
+                    text = prettifyDate(race.firstPractice?.date!!, race.date!!),
+                    fontSize = 24.sp,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(getImageBasedOnName(race.circuit?.circuitId!!)),
+                    contentDescription = race.raceName!! + " track layout"
+                )
+                Text(
+                    text = "Show on map",
+                    modifier = Modifier.clickable {
+                        val long = race.circuit?.Location?.long
+                        val lat = race.circuit?.Location?.lat
+                        val circuitName = race.circuit?.circuitName
+
+                        val gmmIntentUri = Uri.parse("geo:$lat,$long?q=$circuitName")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                        mapIntent.setPackage("com.google.android.apps.maps")
+                        startActivity(context, mapIntent, null)
+                    },
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Italic,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+        }
+
+        Button(
+            onClick = {
+                val city = race.circuit?.Location?.locality
+                val country = race.circuit?.Location?.country
+
+                val dateParts = race.date!!.split("-")
+                val year = dateParts[0].toInt()
+                val month = dateParts[1].toInt()
+                val day = dateParts[2].toInt()
+
+                val timeParts = getTimeInLocalFormat(race.time!!).split(":")
+                val hour = timeParts[0].toInt()
+                val minutes = timeParts[1].toInt()
+
+                val startTime: Long = Calendar.getInstance().run {
+                    set(year, month - 1, day, hour, minutes)
+                    timeInMillis
+                }
+                val endTime: Long = Calendar.getInstance().run {
+                    set(year, month - 1, day, hour + 2, minutes)
+                    timeInMillis
+                }
+
+                val intent = Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.Events.TITLE, race.raceName)
+                    .putExtra(CalendarContract.Events.EVENT_LOCATION, "$city, $country")
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
+                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
+                    .putExtra(CalendarContract.Events.ALL_DAY, false)
+
+                startActivity(context, intent, null)
+            },
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .fillMaxWidth()
         ) {
             Text(
-                text = race.circuit?.circuitId!!.replace("_", " ").replaceFirstChar { it.uppercase() },
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
-            )
-            Text(
-                text = prettifyDate(race.firstPractice?.date!!, race.date!!),
-                fontSize = 24.sp,
-                fontStyle = FontStyle.Italic
+                text = "Add race to calendar"
             )
         }
-        Image(
-            painter = painterResource(getImageBasedOnName(race.circuit?.circuitId!!)),
-            contentDescription = race.raceName!! + " track layout"
-        )
     }
 }
 

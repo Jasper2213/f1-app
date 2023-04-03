@@ -71,7 +71,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                                     color = if (index % 2 == 0) Color.LightGray else Color.White
                                 )
                         ) {
-                            RaceResultItem(index, result)
+                            RaceResultItem(result)
                         }
 
                         if (index < selectedRace.results.size - 1)
@@ -102,7 +102,6 @@ private fun NoResults() {
 
 @Composable
 private fun RaceResultItem(
-    index: Int,
     result: Results
 ) {
     Row(
