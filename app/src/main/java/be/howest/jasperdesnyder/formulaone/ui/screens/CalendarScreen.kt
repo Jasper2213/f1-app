@@ -18,8 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.howest.jasperdesnyder.formulaone.ErrorScreen
-import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -31,11 +29,11 @@ fun CalendarScreen(
     onRaceClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (formulaOneApiUiState) {
-        is FormulaOneApiUiState.Loading -> LoadingScreen()
-        is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> CalendarScreenContent(formulaOneApiUiState.formulaOneData.raceTable?.races!!, viewModel, onRaceClicked)
-    }
+    CalendarScreenContent(
+        (formulaOneApiUiState as FormulaOneApiUiState.Success).formulaOneData.raceTable?.races!!,
+        viewModel,
+        onRaceClicked
+    )
 }
 
 @Composable

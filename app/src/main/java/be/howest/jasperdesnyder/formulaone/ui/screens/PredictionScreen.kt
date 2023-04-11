@@ -24,8 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import be.howest.jasperdesnyder.formulaone.ErrorScreen
-import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Driver
 import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
@@ -45,13 +43,9 @@ fun PredictionScreen(
     viewModel: FormulaOneViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (formulaOneApiUiState) {
-        is FormulaOneApiUiState.Loading -> LoadingScreen()
-        is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> PredictionScreenContent(uiState, viewModel, onSubmitClicked,
-            formulaOneApiUiState.formulaOneData.standingsTable?.standingsLists!![0].driverStanding.map { it.driver!! }
-        )
-    }
+    PredictionScreenContent(uiState, viewModel, onSubmitClicked,
+        (formulaOneApiUiState as FormulaOneApiUiState.Success).formulaOneData.standingsTable?.standingsLists!![0].driverStanding.map { it.driver!! }
+    )
 }
 
 @Composable

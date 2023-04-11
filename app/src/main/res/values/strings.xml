@@ -47,4 +47,5 @@
     <string name="race">Race</string>
     <string name="sprint">Sprint</string>
     <string name="try_again">Try again</string>
+    <string name="startup">Start up</string>
 </resources>

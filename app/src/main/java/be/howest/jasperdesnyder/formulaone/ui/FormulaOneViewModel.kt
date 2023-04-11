@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import be.howest.jasperdesnyder.formulaone.model.*
+import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
+import be.howest.jasperdesnyder.formulaone.model.MRData
+import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.network.FormulaOneApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,13 +25,12 @@ sealed interface FormulaOneApiUiState {
 class FormulaOneViewModel : ViewModel() {
 
     var formulaOneApiUiState: FormulaOneApiUiState by mutableStateOf(FormulaOneApiUiState.Loading)
-        private set
 
-    init {
-        getSeasonInformation()
-    }
+//    init {
+//        getSeasonInformation()
+//    }
 
-    private fun getSeasonInformation() {
+    fun getSeasonInformation() {
         viewModelScope.launch {
             formulaOneApiUiState =
                 try {

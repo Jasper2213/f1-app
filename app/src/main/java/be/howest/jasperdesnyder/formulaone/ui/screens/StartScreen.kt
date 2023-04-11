@@ -1,24 +1,18 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.CalendarContract
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,8 +22,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import be.howest.jasperdesnyder.formulaone.ErrorScreen
-import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.model.Session
@@ -45,11 +37,7 @@ fun StartScreen(
     formulaOneApiUiState: FormulaOneApiUiState,
     modifier: Modifier = Modifier
 ) {
-    when (formulaOneApiUiState) {
-        is FormulaOneApiUiState.Loading -> LoadingScreen()
-        is FormulaOneApiUiState.Error -> ErrorScreen()
-        is FormulaOneApiUiState.Success -> StartScreenContent(formulaOneApiUiState.nextRace)
-    }
+    StartScreenContent((formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -67,7 +55,6 @@ private fun StartScreenContent(race: Race) {
     }
 }
 
-@SuppressLint("QueryPermissionsNeeded")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GeneralRaceInformation(race: Race) {

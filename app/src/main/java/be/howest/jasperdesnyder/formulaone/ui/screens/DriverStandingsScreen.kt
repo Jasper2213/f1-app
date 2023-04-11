@@ -20,8 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.howest.jasperdesnyder.formulaone.ErrorScreen
-import be.howest.jasperdesnyder.formulaone.LoadingScreen
 import be.howest.jasperdesnyder.formulaone.model.DriverStanding
 import be.howest.jasperdesnyder.formulaone.model.StandingsTable
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
@@ -40,11 +38,7 @@ fun DriverStandingsScreen(
             driversSelected = true
         )
 
-        when (formulaOneApiUiState) {
-            is FormulaOneApiUiState.Loading -> LoadingScreen()
-            is FormulaOneApiUiState.Error -> ErrorScreen()
-            is FormulaOneApiUiState.Success -> DriverStandingsScreenContent(formulaOneApiUiState.formulaOneData.standingsTable)
-        }
+        DriverStandingsScreenContent((formulaOneApiUiState as FormulaOneApiUiState.Success).formulaOneData.standingsTable)
     }
 }
 
