@@ -1,6 +1,11 @@
 package be.howest.jasperdesnyder.formulaone
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -12,17 +17,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -55,13 +67,17 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
         ActivityResultContracts.StartActivityForResult()
     ) {}
 
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             if (currentScreen != FormulaOneScreen.Startup) {
                 FormulaOneTopBar(
                     currentScreenTitle = currentScreen.title,
                     canNavigateBack = navController.previousBackStackEntry != null,
-                    navigateUp = { navController.navigateUp() }
+                    navigateUp = { navController.navigateUp() },
+                    viewModel = viewModel,
+                    uiState = uiState
                 )
             }
         },
@@ -74,8 +90,6 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        val uiState by viewModel.uiState.collectAsState()
-
         NavHost(
             navController = navController,
             startDestination = FormulaOneScreen.Startup.name,
@@ -191,8 +205,13 @@ fun FormulaOneTopBar(
     @StringRes currentScreenTitle: Int,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FormulaOneViewModel,
+    uiState: FormulaOneUiState
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var isChecked by remember { mutableStateOf(uiState.notificationsEnabled) }
+
     TopAppBar(
         title = {
             Text(
@@ -200,7 +219,6 @@ fun FormulaOneTopBar(
                 fontSize = 28.sp
             )
         },
-        modifier = modifier.background(MaterialTheme.colors.primary),
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
@@ -208,6 +226,39 @@ fun FormulaOneTopBar(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back_button)
                     )
+                }
+            }
+        },
+        modifier = modifier.background(MaterialTheme.colors.primary),
+        actions = {
+            if (currentScreenTitle == FormulaOneScreen.Calendar.title) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = "More options",
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    DropdownMenuItem(onClick = {}) {
+                        Row {
+                            Text(
+                                text = "Get notified 30 minutes before race starts?",
+                                fontSize = 16.sp
+                            )
+                            Switch(
+                                checked = isChecked,
+                                onCheckedChange = {
+                                    isChecked = it
+                                    viewModel.updateNotificationsEnabled(it)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -26,10 +26,6 @@ class FormulaOneViewModel : ViewModel() {
 
     var formulaOneApiUiState: FormulaOneApiUiState by mutableStateOf(FormulaOneApiUiState.Loading)
 
-//    init {
-//        getSeasonInformation()
-//    }
-
     fun getSeasonInformation() {
         viewModelScope.launch {
             formulaOneApiUiState =
@@ -89,6 +85,10 @@ class FormulaOneViewModel : ViewModel() {
 //            )
 //        }
 //    }
+
+    fun updateNotificationsEnabled(enabled: Boolean) {
+        _uiState.value.notificationsEnabled = enabled
+    }
 }
 
 private suspend fun getNextRace(): Race {

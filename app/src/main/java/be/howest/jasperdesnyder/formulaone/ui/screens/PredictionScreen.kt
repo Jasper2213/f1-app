@@ -43,7 +43,10 @@ fun PredictionScreen(
     viewModel: FormulaOneViewModel,
     modifier: Modifier = Modifier
 ) {
-    PredictionScreenContent(uiState, viewModel, onSubmitClicked,
+    PredictionScreenContent(
+        uiState,
+        viewModel,
+        onSubmitClicked,
         (formulaOneApiUiState as FormulaOneApiUiState.Success).formulaOneData.standingsTable?.standingsLists!![0].driverStanding.map { it.driver!! }
     )
 }
