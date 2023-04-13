@@ -1,8 +1,6 @@
 package be.howest.jasperdesnyder.formulaone
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -52,7 +49,38 @@ enum class FormulaOneScreen(@StringRes val title: Int) {
     Predictions(title = R.string.predictions)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun showSimpleNotification(
+    context: Context,
+    channelId: String,
+    notificationId: Int,
+    textTitle: String,
+    textContent: String,
+    priority: Int = NotificationCompat.PRIORITY_DEFAULT
+) {
+    val builder = NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(R.drawable.logo)
+        .setContentTitle(textTitle)
+        .setContentText(textContent)
+        .setPriority(priority)
+
+    with(NotificationManagerCompat.from(context)) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                context as MainActivity,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                1)
+        }
+        notify(notificationId, builder.build())
+    }
+}
+
+//@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FormulaOneApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -200,6 +228,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FormulaOneTopBar(
     @StringRes currentScreenTitle: Int,
@@ -211,6 +240,8 @@ fun FormulaOneTopBar(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var isChecked by remember { mutableStateOf(uiState.notificationsEnabled) }
+
+    val context = LocalContext.current
 
     TopAppBar(
         title = {
@@ -242,10 +273,13 @@ fun FormulaOneTopBar(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp).fillMaxWidth()
                 ) {
                     DropdownMenuItem(onClick = {}) {
-                        Row {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Text(
                                 text = "Get notified 30 minutes before race starts?",
                                 fontSize = 16.sp
@@ -253,6 +287,18 @@ fun FormulaOneTopBar(
                             Switch(
                                 checked = isChecked,
                                 onCheckedChange = {
+                                    // Ask for permission to send notifications if not already granted
+                                    if (ActivityCompat.checkSelfPermission(
+                                            context,
+                                            Manifest.permission.POST_NOTIFICATIONS
+                                        ) != PackageManager.PERMISSION_GRANTED
+                                    ) {
+                                        ActivityCompat.requestPermissions(
+                                            context as MainActivity,
+                                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                            1)
+                                    }
+
                                     isChecked = it
                                     viewModel.updateNotificationsEnabled(it)
                                 }

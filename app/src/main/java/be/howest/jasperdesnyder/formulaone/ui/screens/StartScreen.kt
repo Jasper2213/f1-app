@@ -260,7 +260,7 @@ private fun getDateFromSession(date: String): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun getTimeInLocalFormat(time: String): String {
+fun getTimeInLocalFormat(time: String): String {
     val original = LocalTime.parse(time, DateTimeFormatter.ISO_OFFSET_TIME)
     val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
                                      .withLocale(Locale.Builder().setLanguageTag("be").build())
