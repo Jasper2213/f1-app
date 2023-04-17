@@ -1,4 +1,6 @@
-package be.howest.jasperdesnyder.formulaone.model
+package be.howest.jasperdesnyder.formulaone.data
+
+import be.howest.jasperdesnyder.formulaone.model.Race
 
 data class FormulaOneUiState (
     /* Values used for calendar/detail screen */

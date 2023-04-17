@@ -1,7 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -24,13 +22,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
-import be.howest.jasperdesnyder.formulaone.MainActivity
 import be.howest.jasperdesnyder.formulaone.model.Race
-import be.howest.jasperdesnyder.formulaone.showSimpleNotification
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
+import be.howest.jasperdesnyder.formulaone.workers.makeStatusNotification
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -54,40 +49,22 @@ private fun CalendarScreenContent(
     viewModel: FormulaOneViewModel,
     onRaceClicked: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    Column {
-        Button(
-            modifier = Modifier.fillMaxWidth().padding(15.dp),
-            onClick = {
-                showSimpleNotification(
-                    context,
-                    "channelID",
-                    0,
-                    "Simple notification",
-                    "This is a simple notification with default priority",
+    LazyColumn {
+        itemsIndexed(races) { index, race ->
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 15.dp)
+                    .clickable(onClick = {
+                        viewModel.updateSelectedRace(race)
+                        onRaceClicked()
+                    })
+            ) {
+                RaceItem(
+                    title = race.circuit?.circuitId!!,
+                    date = race.date!!,
+                    trackLayoutRes = getImageBasedOnName(race.circuit?.circuitId!!)
                 )
-            }
-        ) {
-            Text(text = "Show simple notification")
-        }
-        LazyColumn {
-            itemsIndexed(races) { index, race ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 15.dp)
-                        .clickable(onClick = {
-                            viewModel.updateSelectedRace(race)
-                            onRaceClicked()
-                        })
-                ) {
-                    RaceItem(
-                        title = race.circuit?.circuitId!!,
-                        date = race.date!!,
-                        trackLayoutRes = getImageBasedOnName(race.circuit?.circuitId!!)
-                    )
-                }
             }
         }
     }

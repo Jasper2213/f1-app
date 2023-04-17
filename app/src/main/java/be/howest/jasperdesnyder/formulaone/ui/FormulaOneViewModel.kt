@@ -4,14 +4,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import be.howest.jasperdesnyder.formulaone.FormulaOneApplication
+import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
+import be.howest.jasperdesnyder.formulaone.data.UserPreferencesRepository
 import be.howest.jasperdesnyder.formulaone.model.MRData
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.network.FormulaOneApi
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -22,7 +29,24 @@ sealed interface FormulaOneApiUiState {
     object Loading : FormulaOneApiUiState
 }
 
-class FormulaOneViewModel : ViewModel() {
+class FormulaOneViewModel(
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
+    val uiState: StateFlow<FormulaOneUiState> =
+        userPreferencesRepository.notificationsEnabled.map { notificationsEnabled ->
+            FormulaOneUiState(notificationsEnabled = notificationsEnabled)
+        }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = FormulaOneUiState()
+            )
+
+    fun selectNotificationsEnabled(notificationsEnabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveNotificationsPreference(notificationsEnabled)
+        }
+    }
 
     var formulaOneApiUiState: FormulaOneApiUiState by mutableStateOf(FormulaOneApiUiState.Loading)
 
@@ -33,7 +57,7 @@ class FormulaOneViewModel : ViewModel() {
                     val mrData = getMrData()
 
                     val nextRace = getNextRace()
-                    _uiState.value.nextRace = nextRace
+                    uiState.value.nextRace = nextRace
 
                     addResultsToMrData(mrData)
                     addDriversStandingsToMrData(mrData)
@@ -51,31 +75,28 @@ class FormulaOneViewModel : ViewModel() {
         }
     }
 
-    private val _uiState = MutableStateFlow(FormulaOneUiState())
-    val uiState: StateFlow<FormulaOneUiState> = _uiState.asStateFlow()
-
     fun updateAvailablePoints() {
-        _uiState.value.availablePoints -= _uiState.value.usedPoints
+        uiState.value.availablePoints -= uiState.value.usedPoints
     }
 
     fun updateSelectedDriver(driver: String?) {
-        _uiState.value.selectedDriver = driver
+        uiState.value.selectedDriver = driver
     }
 
     fun updateUsedPoints(points: Double) {
-        _uiState.value.usedPoints = points
+        uiState.value.usedPoints = points
     }
 
     fun updatePredictionsEnabled(enabled: Boolean) {
-        _uiState.value.predictionsEnabled = enabled
+        uiState.value.predictionsEnabled = enabled
     }
 
     fun updateSelectedRace(race: Race) {
-        _uiState.value.selectedRace = race
+        uiState.value.selectedRace = race
     }
 
 //    private fun updateUiState() {
-//        _uiState.update { currentState ->
+//        uiState.update { currentState ->
 //            currentState.copy(
 ////                availablePoints = currentState.availablePoints - currentState.usedPoints,
 //                selectedDriver = currentState.selectedDriver,
@@ -86,8 +107,13 @@ class FormulaOneViewModel : ViewModel() {
 //        }
 //    }
 
-    fun updateNotificationsEnabled(enabled: Boolean) {
-        _uiState.value.notificationsEnabled = enabled
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as FormulaOneApplication)
+                FormulaOneViewModel(application.userPreferencesRepository)
+            }
+        }
     }
 }
 

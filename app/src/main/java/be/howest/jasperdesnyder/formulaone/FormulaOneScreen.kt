@@ -1,11 +1,11 @@
 package be.howest.jasperdesnyder.formulaone
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -23,20 +23,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import be.howest.jasperdesnyder.formulaone.model.FormulaOneUiState
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 import be.howest.jasperdesnyder.formulaone.ui.screens.*
+import be.howest.jasperdesnyder.formulaone.workers.NotificationWorker
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 enum class FormulaOneScreen(@StringRes val title: Int) {
     Startup(title = R.string.startup),
@@ -49,36 +55,6 @@ enum class FormulaOneScreen(@StringRes val title: Int) {
     Predictions(title = R.string.predictions)
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-fun showSimpleNotification(
-    context: Context,
-    channelId: String,
-    notificationId: Int,
-    textTitle: String,
-    textContent: String,
-    priority: Int = NotificationCompat.PRIORITY_DEFAULT
-) {
-    val builder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.drawable.logo)
-        .setContentTitle(textTitle)
-        .setContentText(textContent)
-        .setPriority(priority)
-
-    with(NotificationManagerCompat.from(context)) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                context as MainActivity,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                1)
-        }
-        notify(notificationId, builder.build())
-    }
-}
-
 //@RequiresApi(Build.VERSION_CODES.O)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -89,13 +65,17 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
         backStackEntry?.destination?.route ?: FormulaOneScreen.Start.name
     )
 
-    val viewModel: FormulaOneViewModel = viewModel()
+    val viewModel: FormulaOneViewModel = viewModel(
+        factory = FormulaOneViewModel.Factory
+    )
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {}
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState().value
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -132,6 +112,33 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                     onStartupComplete = {
                         if (currentScreen == FormulaOneScreen.Startup)
                             navController.navigate(FormulaOneScreen.Start.name)
+
+                        val nextRace = uiState.nextRace!!
+                        val timeOfNextRace = getTimeInLocalFormat(nextRace.time!!)
+                        val dateOfNextRace = nextRace.date!!
+
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                        val dateTime = LocalDateTime.parse("$dateOfNextRace $timeOfNextRace", formatter)
+                        val timeToEvent = dateTime.toInstant(ZoneOffset.UTC)
+                                                  .minus(2, ChronoUnit.HOURS)     // Minus 2 hours because time zones are not taken into account
+                                                  /*.minus(30, ChronoUnit.MINUTES)*/
+                                                  .toEpochMilli()
+
+                        val workManager = WorkManager.getInstance(context)
+
+                        if (viewModel.formulaOneApiUiState is FormulaOneApiUiState.Success &&                   // API data is loaded
+                            uiState.notificationsEnabled                                                        // User opted in for notifications
+                        ) {
+                            val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()       // Only show notification if user opted in for it
+                                .setInitialDelay(
+                                    1000 * 30/*timeToEvent - System.currentTimeMillis()*/,
+                                    TimeUnit.MILLISECONDS
+                                )
+                                .addTag("notification_before_race")
+                                .build()
+
+                            workManager.enqueue(notificationWorkRequest)
+                        }
                     },
                     onRetryClicked = {
                         viewModel.formulaOneApiUiState = FormulaOneApiUiState.Loading
@@ -273,7 +280,9 @@ fun FormulaOneTopBar(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.padding(8.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
                 ) {
                     DropdownMenuItem(onClick = {}) {
                         Row(
@@ -287,7 +296,6 @@ fun FormulaOneTopBar(
                             Switch(
                                 checked = isChecked,
                                 onCheckedChange = {
-                                    // Ask for permission to send notifications if not already granted
                                     if (ActivityCompat.checkSelfPermission(
                                             context,
                                             Manifest.permission.POST_NOTIFICATIONS
@@ -298,9 +306,18 @@ fun FormulaOneTopBar(
                                             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                                             1)
                                     }
+                                    else {
+                                        isChecked = it
+                                        viewModel.selectNotificationsEnabled(it)
+                                    }
 
-                                    isChecked = it
-                                    viewModel.updateNotificationsEnabled(it)
+                                    Toast.makeText(
+                                        context,
+                                        "Notifications are now ${if (it) "enabled" else "disabled"}!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    if (!it) WorkManager.getInstance(context).cancelAllWork()   // Clear all scheduled notifications when notifications get disabled
                                 }
                             )
                         }
