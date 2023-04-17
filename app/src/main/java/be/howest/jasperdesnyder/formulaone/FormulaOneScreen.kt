@@ -5,12 +5,20 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -18,6 +26,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
+import be.howest.jasperdesnyder.formulaone.model.BottomNavItem
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -338,7 +348,20 @@ private fun FormulaOneBottomBar(
             .height(60.dp)
             .background(MaterialTheme.colors.background)
     ) {
-        NavItemsRepo.items.forEach { navItem ->
+        NavItemsRepo.items.forEachIndexed { index, navItem ->
+            val iconScale = remember { Animatable(0f) }
+            LaunchedEffect(key1 = true) {
+                iconScale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = index * 100,
+                        easing = {
+                            OvershootInterpolator(4f).getInterpolation(it)
+                        })
+                )
+            }
+
             BottomNavigationItem(
                 selected = currentScreen == navItem.route,
                 onClick = {
@@ -348,7 +371,9 @@ private fun FormulaOneBottomBar(
                     Icon(
                         navItem.icon,
                         contentDescription = navItem.label,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .scale(iconScale.value)
                     )
                 }
             )
