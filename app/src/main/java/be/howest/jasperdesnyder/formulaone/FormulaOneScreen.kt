@@ -12,10 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +20,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -41,7 +38,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
-import be.howest.jasperdesnyder.formulaone.model.BottomNavItem
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -131,7 +127,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                         val dateTime = LocalDateTime.parse("$dateOfNextRace $timeOfNextRace", formatter)
                         val timeToEvent = dateTime.toInstant(ZoneOffset.UTC)
                                                   .minus(2, ChronoUnit.HOURS)     // Minus 2 hours because time zones are not taken into account
-                                                  /*.minus(30, ChronoUnit.MINUTES)*/
+                                                  .minus(30, ChronoUnit.MINUTES)
                                                   .toEpochMilli()
 
                         val workManager = WorkManager.getInstance(context)
@@ -318,7 +314,7 @@ fun FormulaOneTopBar(
                                     }
                                     else {
                                         isChecked = it
-                                        viewModel.selectNotificationsEnabled(it)
+                                        viewModel.updateNotificationsEnabled(it)
                                     }
 
                                     Toast.makeText(
@@ -333,6 +329,22 @@ fun FormulaOneTopBar(
                         }
                     }
                 }
+            }
+
+            if (currentScreenTitle == FormulaOneScreen.Predictions.title) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = MaterialTheme.colors.onPrimary,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            viewModel.updatePredictionsEnabled(true)
+                            viewModel.updateUsedPoints(0.0)
+                            viewModel.updatePredictedDriver("")
+                            viewModel.setAvailablePoints(2000.0)
+                        }
+                )
             }
         }
     )

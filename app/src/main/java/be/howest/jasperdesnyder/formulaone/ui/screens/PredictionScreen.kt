@@ -50,10 +50,7 @@ import be.howest.jasperdesnyder.formulaone.model.Driver
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 
-/*
-    TODO: Figure out if I can keep uistate after app has been closed (to block the user from making a prediction if he already has)
-            Store state in database?
- */
+// TODO: Add text when predictions are disabled?
 
 @Composable
 fun PredictionScreen(
@@ -124,7 +121,7 @@ private fun PredictionScreenContent(
                 textAlign = TextAlign.Center
             )
             OutlinedTextField(
-                value = uiState.selectedDriver ?: selectedDriver,
+                value = uiState.selectedDriver!!.ifEmpty { selectedDriver },
                 onValueChange = { selectedDriver = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -266,7 +263,7 @@ private fun PredictionScreenContent(
                     ) {
                         viewModel.updateUsedPoints(usedPoints)
                         viewModel.updateAvailablePoints()
-                        viewModel.updateSelectedDriver(selectedDriver)
+                        viewModel.updatePredictedDriver(selectedDriver)
                         viewModel.updatePredictionsEnabled(false)
                     }
 

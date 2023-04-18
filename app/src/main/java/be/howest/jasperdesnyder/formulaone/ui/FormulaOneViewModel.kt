@@ -34,7 +34,13 @@ class FormulaOneViewModel(
 ) : ViewModel() {
     val uiState: StateFlow<FormulaOneUiState> =
         userPreferencesRepository.notificationsEnabled.map { notificationsEnabled ->
-            FormulaOneUiState(notificationsEnabled = notificationsEnabled)
+            FormulaOneUiState(
+                availablePoints = userPreferencesRepository.getAvailablePoints(),
+                usedPoints = userPreferencesRepository.getUsedPoints(),
+                predictionsEnabled = userPreferencesRepository.getPredictionsEnabled(),
+                selectedDriver = userPreferencesRepository.getPredictedDriver(),
+                notificationsEnabled = notificationsEnabled
+            )
         }
             .stateIn(
                 scope = viewModelScope,
@@ -42,9 +48,41 @@ class FormulaOneViewModel(
                 initialValue = FormulaOneUiState()
             )
 
-    fun selectNotificationsEnabled(notificationsEnabled: Boolean) {
+    fun updateNotificationsEnabled(notificationsEnabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveNotificationsPreference(notificationsEnabled)
+        }
+    }
+
+    fun updatePredictionsEnabled(predictionsEnabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.savePredictionsPreference(predictionsEnabled)
+        }
+    }
+
+    fun updateAvailablePoints() {
+        viewModelScope.launch {
+            val availablePoints: Double = userPreferencesRepository.getAvailablePoints()
+            val usedPoints: Double = userPreferencesRepository.getUsedPoints()
+            userPreferencesRepository.saveAvailablePoints(availablePoints - usedPoints)
+        }
+    }
+
+    fun updateUsedPoints(usedPoints: Double) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveUsedPoints(usedPoints)
+        }
+    }
+
+    fun updatePredictedDriver(predictedDriver: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.savePredictedDriver(predictedDriver)
+        }
+    }
+
+    fun updateRacePredictedOn(racePredictedOn: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveRacePredictedOn(racePredictedOn)
         }
     }
 
@@ -75,24 +113,14 @@ class FormulaOneViewModel(
         }
     }
 
-    fun updateAvailablePoints() {
-        uiState.value.availablePoints -= uiState.value.usedPoints
-    }
-
-    fun updateSelectedDriver(driver: String?) {
-        uiState.value.selectedDriver = driver
-    }
-
-    fun updateUsedPoints(points: Double) {
-        uiState.value.usedPoints = points
-    }
-
-    fun updatePredictionsEnabled(enabled: Boolean) {
-        uiState.value.predictionsEnabled = enabled
-    }
-
     fun updateSelectedRace(race: Race) {
         uiState.value.selectedRace = race
+    }
+
+    fun setAvailablePoints(d: Double) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveAvailablePoints(d)
+        }
     }
 
 //    private fun updateUiState() {
