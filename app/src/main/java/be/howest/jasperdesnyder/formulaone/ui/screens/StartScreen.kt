@@ -1,9 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.CalendarContract
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,34 +18,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import be.howest.jasperdesnyder.formulaone.R
+import be.howest.jasperdesnyder.formulaone.data.createCalendarIntent
+import be.howest.jasperdesnyder.formulaone.data.createMapsIntent
+import be.howest.jasperdesnyder.formulaone.data.getDateFromSession
+import be.howest.jasperdesnyder.formulaone.data.getImageBasedOnName
+import be.howest.jasperdesnyder.formulaone.data.getTimeInLocalFormat
+import be.howest.jasperdesnyder.formulaone.data.prettifyDate
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.model.Session
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import java.time.*
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StartScreen(
-    formulaOneApiUiState: FormulaOneApiUiState,
-    modifier: Modifier = Modifier
+    formulaOneApiUiState: FormulaOneApiUiState
 ) {
     StartScreenContent((formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun StartScreenContent(race: Race) {
+private fun StartScreenContent(
+    race: Race,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(15.dp)
     ) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
+        Column(modifier = modifier.align(Alignment.Center)) {
             GeneralRaceInformation(race)
             GenerateSessions(race)
         }
@@ -57,19 +59,20 @@ private fun StartScreenContent(race: Race) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GeneralRaceInformation(race: Race) {
+fun GeneralRaceInformation(race: Race, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(end = 10.dp)
+                modifier = modifier.padding(end = 10.dp)
             ) {
                 Text(
-                    text = race.circuit?.circuitId!!.replace("_", " ")
+                    text = race.circuit?.circuitId!!
+                        .replace("_", " ")
                         .replaceFirstChar { it.uppercase() },
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
@@ -81,7 +84,7 @@ fun GeneralRaceInformation(race: Race) {
                     fontStyle = FontStyle.Italic
                 )
             }
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
@@ -90,15 +93,8 @@ fun GeneralRaceInformation(race: Race) {
                 )
                 Text(
                     text = "Show on map",
-                    modifier = Modifier.clickable {
-                        val long = race.circuit?.Location?.long
-                        val lat = race.circuit?.Location?.lat
-                        val circuitName = race.circuit?.circuitName
-
-                        val gmmIntentUri = Uri.parse("geo:$lat,$long?q=$circuitName")
-                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                        mapIntent.setPackage("com.google.android.apps.maps")
-                        startActivity(context, mapIntent, null)
+                    modifier = modifier.clickable {
+                        createMapsIntent(race, context)
                     },
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Italic,
@@ -109,38 +105,9 @@ fun GeneralRaceInformation(race: Race) {
 
         Button(
             onClick = {
-                val city = race.circuit?.Location?.locality
-                val country = race.circuit?.Location?.country
-
-                val dateParts = race.date!!.split("-")
-                val year = dateParts[0].toInt()
-                val month = dateParts[1].toInt()
-                val day = dateParts[2].toInt()
-
-                val timeParts = getTimeInLocalFormat(race.time!!).split(":")
-                val hour = timeParts[0].toInt()
-                val minutes = timeParts[1].toInt()
-
-                val startTime: Long = Calendar.getInstance().run {
-                    set(year, month - 1, day, hour, minutes)
-                    timeInMillis
-                }
-                val endTime: Long = Calendar.getInstance().run {
-                    set(year, month - 1, day, hour + 2, minutes)
-                    timeInMillis
-                }
-
-                val intent = Intent(Intent.ACTION_INSERT)
-                    .setData(CalendarContract.Events.CONTENT_URI)
-                    .putExtra(CalendarContract.Events.TITLE, race.raceName)
-                    .putExtra(CalendarContract.Events.EVENT_LOCATION, "$city, $country")
-                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
-                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
-                    .putExtra(CalendarContract.Events.ALL_DAY, false)
-
-                startActivity(context, intent, null)
+                createCalendarIntent(race, context)
             },
-            modifier = Modifier
+            modifier = modifier
                 .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
@@ -149,43 +116,6 @@ fun GeneralRaceInformation(race: Race) {
             )
         }
     }
-}
-
-fun getImageBasedOnName(name: String): Int {
-    return when (name) {
-        "bahrain" -> R.drawable.bahrain
-        "jeddah" -> R.drawable.saudi_arabia
-        "albert_park" -> R.drawable.australia
-        "baku" -> R.drawable.azerbaijan
-        "miami" -> R.drawable.miami
-        "imola" -> R.drawable.imola
-        "monaco" -> R.drawable.monaco
-        "catalunya" -> R.drawable.spain
-        "villeneuve" -> R.drawable.canada
-        "red_bull_ring" -> R.drawable.austria
-        "silverstone" -> R.drawable.britain
-        "hungaroring" -> R.drawable.hungary
-        "spa" -> R.drawable.belgium
-        "zandvoort" -> R.drawable.netherlands
-        "monza" -> R.drawable.monza
-        "marina_bay" -> R.drawable.singapore
-        "suzuka" -> R.drawable.japan
-        "losail" -> R.drawable.qatar
-        "americas" -> R.drawable.united_states
-        "rodriguez" -> R.drawable.mexico
-        "interlagos" -> R.drawable.brazil
-        "vegas" -> R.drawable.las_vegas
-        "yas_marina" -> R.drawable.abu_dhabi
-        else -> R.drawable.bahrain
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-private fun prettifyDate(firstDate: String, lastDate: String): String {
-    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
-    val first = LocalDate.parse(firstDate)
-    val last = LocalDate.parse(lastDate)
-    return first.format(formatter) + " - " + last.format(formatter)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -254,24 +184,10 @@ private fun GenerateSprintSessions(race: Race) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun getDateFromSession(date: String): String {
-    return LocalDate.parse(date).dayOfWeek.toString().lowercase()
-        .replaceFirstChar { it.uppercase() }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun getTimeInLocalFormat(time: String): String {
-    val original = LocalTime.parse(time, DateTimeFormatter.ISO_OFFSET_TIME)
-    val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-                                     .withLocale(Locale.Builder().setLanguageTag("be").build())
-
-    return formatter.format(original.plusHours(2))
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Session(
     title: String,
+    modifier: Modifier = Modifier,
     session: Session? = null,
     race: Race? = null
 ) {
@@ -283,6 +199,7 @@ private fun Session(
             time = getTimeInLocalFormat(session?.time!!)
             date = getDateFromSession(session.date!!)
         }
+
         else -> {
             time = getTimeInLocalFormat(race.time!!)
             date = getDateFromSession(race.date!!)
@@ -290,7 +207,7 @@ private fun Session(
     }
 
     Column(
-        modifier = Modifier.padding(vertical = 10.dp)
+        modifier = modifier.padding(vertical = 10.dp)
     ) {
         Text(
             text = title,
@@ -299,7 +216,7 @@ private fun Session(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(

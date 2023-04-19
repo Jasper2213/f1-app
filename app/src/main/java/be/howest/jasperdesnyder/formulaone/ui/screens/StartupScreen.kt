@@ -109,7 +109,7 @@ fun InitialErrorScreen(
     val linkColor = if (isSystemInDarkTheme()) Color(0xFF87CEEB) else Color.Blue
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -122,11 +122,10 @@ fun InitialErrorScreen(
             )
         )
 
-
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = modifier.padding(horizontal = 16.dp)
         ) {
             Text(
                 text = "Error loading data",
@@ -143,7 +142,7 @@ fun InitialErrorScreen(
             )
 
             Button(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 onClick = onRetryClicked
@@ -158,7 +157,7 @@ fun InitialErrorScreen(
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = modifier.padding(horizontal = 16.dp)
         ) {
             Text(
                 text = "If the problem persists, please contact the developer at",
@@ -166,7 +165,7 @@ fun InitialErrorScreen(
             )
             Text(
                 text = "jasper.desnyder@student.howest.be",
-                modifier = Modifier.clickable(
+                modifier = modifier.clickable(
                     onClick = onEmailClicked
                 ),
                 textAlign = TextAlign.Center,

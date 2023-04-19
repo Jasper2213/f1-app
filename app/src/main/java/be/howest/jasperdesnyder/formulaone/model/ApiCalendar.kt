@@ -75,15 +75,12 @@ data class StandingsLists (
 )
 
 data class DriverStanding (
-    @SerializedName("position"     ) var position     : String?                 = null,
     @SerializedName("points"       ) var points       : String?                 = null,
     @SerializedName("Driver"       ) var driver       : Driver?                 = Driver(),
     @SerializedName("Constructors" ) var constructors : ArrayList<Constructor>  = arrayListOf()
 )
 
 data class ConstructorStandings (
-    @SerializedName("position"     ) var position     : String?      = null,
     @SerializedName("points"       ) var points       : String?      = null,
-    @SerializedName("wins"         ) var wins         : String?      = null,
     @SerializedName("Constructor"  ) var constructor  : Constructor? = Constructor()
 )

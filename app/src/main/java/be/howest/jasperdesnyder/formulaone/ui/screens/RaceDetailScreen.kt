@@ -27,28 +27,27 @@ import be.howest.jasperdesnyder.formulaone.model.Results
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RaceDetailScreen(
-    selectedRace: Race,
-    modifier: Modifier = Modifier
+    selectedRace: Race
 ) {
     RaceDetailScreenContent(selectedRace)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun RaceDetailScreenContent(selectedRace: Race) {
+private fun RaceDetailScreenContent(selectedRace: Race, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(15.dp)
     ) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
+        Column(modifier = modifier.align(Alignment.Center)) {
             GeneralRaceInformation(race = selectedRace)
 
             Text(
                 text = "Race results",
                 fontSize = 26.sp,
                 fontStyle = FontStyle.Italic,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = modifier.padding(top = 20.dp)
             )
 
             if (selectedRace.results.isEmpty()) {
@@ -56,7 +55,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
             }
             else {
                 LazyColumn(
-                    modifier = Modifier
+                    modifier = modifier
                         .height(400.dp)
                         .border(
                             width = 1.dp,
@@ -66,7 +65,7 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
                 ) {
                     itemsIndexed(selectedRace.results) { index, result ->
                         Row(
-                            modifier = Modifier
+                            modifier = modifier
                                 .background(
                                     color = if (index % 2 == 0) Color.LightGray else Color.White
                                 )
@@ -84,9 +83,9 @@ private fun RaceDetailScreenContent(selectedRace: Race) {
 }
 
 @Composable
-private fun NoResults() {
+private fun NoResults(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(300.dp),
         contentAlignment = Alignment.Center
@@ -95,17 +94,18 @@ private fun NoResults() {
             text = stringResource(R.string.no_results),
             fontSize = 26.sp,
             color = Color.Gray,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
 private fun RaceResultItem(
-    result: Results
+    result: Results,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,7 +117,7 @@ private fun RaceResultItem(
             Text(
                 text = result.position.toString(),
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.padding(end = 10.dp)
+                modifier = modifier.padding(end = 10.dp)
             )
 
             Column {

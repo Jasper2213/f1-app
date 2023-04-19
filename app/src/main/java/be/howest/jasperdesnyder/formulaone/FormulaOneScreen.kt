@@ -35,20 +35,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
+import be.howest.jasperdesnyder.formulaone.data.getMillisToNextRace
+import be.howest.jasperdesnyder.formulaone.data.queueNotification
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 import be.howest.jasperdesnyder.formulaone.ui.screens.*
-import be.howest.jasperdesnyder.formulaone.workers.NotificationWorker
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 enum class FormulaOneScreen(@StringRes val title: Int) {
     Startup(title = R.string.startup),
@@ -119,31 +114,14 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                         if (currentScreen == FormulaOneScreen.Startup)
                             navController.navigate(FormulaOneScreen.Start.name)
 
-                        val nextRace = uiState.nextRace!!
-                        val timeOfNextRace = getTimeInLocalFormat(nextRace.time!!)
-                        val dateOfNextRace = nextRace.date!!
-
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-                        val dateTime = LocalDateTime.parse("$dateOfNextRace $timeOfNextRace", formatter)
-                        val timeToEvent = dateTime.toInstant(ZoneOffset.UTC)
-                                                  .minus(2, ChronoUnit.HOURS)     // Minus 2 hours because time zones are not taken into account
-                                                  .minus(30, ChronoUnit.MINUTES)
-                                                  .toEpochMilli()
+                        val timeToNextRace = getMillisToNextRace(uiState)
 
                         val workManager = WorkManager.getInstance(context)
 
                         if (viewModel.formulaOneApiUiState is FormulaOneApiUiState.Success &&                   // API data is loaded
                             uiState.notificationsEnabled                                                        // User opted in for notifications
                         ) {
-                            val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()       // Only show notification if user opted in for it
-                                .setInitialDelay(
-                                    1000 * 30/*timeToEvent - System.currentTimeMillis()*/,
-                                    TimeUnit.MILLISECONDS
-                                )
-                                .addTag("notification_before_race")
-                                .build()
-
-                            workManager.enqueue(notificationWorkRequest)
+                            queueNotification(workManager, timeToNextRace)
                         }
                     },
                     onRetryClicked = {

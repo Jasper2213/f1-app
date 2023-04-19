@@ -34,7 +34,7 @@ fun MenuScreen(
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(35.dp)
     ) {
@@ -48,10 +48,10 @@ fun MenuScreen(
 }
 
 @Composable
-private fun MenuItem(onClick: () -> Unit, text: String) {
+fun MenuItem(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
     Card(
         elevation = 3.dp,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp)
             .background(
@@ -75,7 +75,7 @@ private fun MenuItem(onClick: () -> Unit, text: String) {
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier
+            modifier = modifier
                 .clickable(onClick = onClick)
                 .padding(15.dp)
         )

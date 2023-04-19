@@ -57,8 +57,7 @@ fun PredictionScreen(
     formulaOneApiUiState: FormulaOneApiUiState,
     uiState: FormulaOneUiState,
     onSubmitClicked: () -> Unit,
-    viewModel: FormulaOneViewModel,
-    modifier: Modifier = Modifier
+    viewModel: FormulaOneViewModel
 ) {
     PredictionScreenContent(
         uiState,
@@ -73,7 +72,8 @@ private fun PredictionScreenContent(
     uiState: FormulaOneUiState,
     viewModel: FormulaOneViewModel,
     onSubmitClicked: () -> Unit,
-    drivers: List<Driver>
+    drivers: List<Driver>,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedDriver by rememberSaveable { mutableStateOf("") }
@@ -90,7 +90,7 @@ private fun PredictionScreenContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
     ) {
@@ -123,7 +123,7 @@ private fun PredictionScreenContent(
             OutlinedTextField(
                 value = uiState.selectedDriver!!.ifEmpty { selectedDriver },
                 onValueChange = { selectedDriver = it },
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .onGloballyPositioned { coordinates ->
                         textFieldSize =
@@ -148,27 +148,29 @@ private fun PredictionScreenContent(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier
+                modifier = modifier
                     .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
                     .height(300.dp)
             ) {
-                drivers
-                    .forEachIndexed { index, driver ->
-                        DropdownMenuItem(
-                            onClick = {
-                                selectedDriver = driver.firstName + " " + driver.lastName
-                                expanded = false
-                            },
-                            modifier = Modifier
-                                .background(
-                                    color = if (index % 2 == 0) Color.LightGray else Color.White
-                                )
-                        ) {
-                            Text(text = driver.firstName + " " + driver.lastName, color = MaterialTheme.colors.onSecondary)
-                        }
-                        if (index < drivers.size - 1)
-                            Divider(color = Color.Black, thickness = 1.dp)
+                drivers.forEachIndexed { index, driver ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedDriver = driver.firstName + " " + driver.lastName
+                            expanded = false
+                        },
+                        modifier = modifier
+                            .background(
+                                color = if (index % 2 == 0) Color.LightGray else Color.White
+                            )
+                    ) {
+                        Text(
+                            text = driver.firstName + " " + driver.lastName,
+                            color = MaterialTheme.colors.onSecondary
+                        )
                     }
+                    if (index < drivers.size - 1)
+                        Divider(color = Color.Black, thickness = 1.dp)
+                }
             }
         }
 
@@ -202,7 +204,7 @@ private fun PredictionScreenContent(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
                 enabled = uiState.predictionsEnabled
             )
         }
@@ -233,7 +235,7 @@ private fun PredictionScreenContent(
                     showConfirmDialog = true
                 } else showErrorDialog = true
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             enabled = uiState.predictionsEnabled,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor =

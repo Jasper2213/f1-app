@@ -2,7 +2,6 @@ package be.howest.jasperdesnyder.formulaone.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import be.howest.jasperdesnyder.formulaone.data.StandingsTopBar
+import be.howest.jasperdesnyder.formulaone.data.getPrettyNumber
 import be.howest.jasperdesnyder.formulaone.model.DriverStanding
 import be.howest.jasperdesnyder.formulaone.model.StandingsTable
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
@@ -36,7 +37,7 @@ fun DriverStandingsScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         StandingsTopBar(
             onConstructorStandingsClicked = onConstructorStandingsClicked,
@@ -48,36 +49,11 @@ fun DriverStandingsScreen(
 }
 
 @Composable
-fun StandingsTopBar(
-    onDriverStandingsClicked: () -> Unit = {},
-    onConstructorStandingsClicked: () -> Unit = {},
-    driversSelected: Boolean
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        StandingsSelector(
-            text = "Drivers",
-            onClick = onDriverStandingsClicked,
-            isBold = driversSelected
-        )
-        StandingsSelector(
-            text = "Constructors",
-            onClick = onConstructorStandingsClicked,
-            isBold = !driversSelected
-        )
-    }
-
-    Line()
-}
-
-@Composable
-private fun DriverStandingsScreenContent(standingsTable: StandingsTable?) {
+private fun DriverStandingsScreenContent(standingsTable: StandingsTable?, modifier: Modifier = Modifier) {
     LazyColumn {
         itemsIndexed(standingsTable?.standingsLists!![0].driverStanding) { index, driverStanding ->
             Row(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
                     .padding(horizontal = 15.dp)
             ) {
@@ -98,14 +74,10 @@ private fun DriverItem(
 ) {
     val driver = driverStanding.driver
 
-    val prettyNumber = if (number < 10) {
-        "0$number"
-    } else {
-        "$number"
-    }
+    val prettyNumber = getPrettyNumber(number)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 5.dp)
             .background(
@@ -126,7 +98,7 @@ private fun DriverItem(
         elevation = 5.dp
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -139,7 +111,7 @@ private fun DriverItem(
                     text = prettyNumber,
                     fontSize = 22.sp,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.padding(end = 20.dp)
+                    modifier = modifier.padding(end = 20.dp)
                 )
 
                 Column {
@@ -166,36 +138,11 @@ private fun DriverItem(
 }
 
 @Composable
-fun StandingsSelector(
-    text: String,
-    onClick: () -> Unit = {},
-    isBold: Boolean
-) {
-    val boldState: FontWeight = if (isBold) {
-        FontWeight.Bold
-    } else {
-        FontWeight.Normal
-    }
-
-    Text(
-        text = text,
-        textDecoration = TextDecoration.Underline,
-        fontSize = 26.sp,
-        fontWeight = boldState,
-        modifier = Modifier
-            .clickable {
-                onClick()
-            }
-            .padding(10.dp)
-    )
-}
-
-@Composable
 fun Line(modifier: Modifier = Modifier) {
     Divider(
         color = Color.Black,
         thickness = 1.dp,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .shadow(
                 elevation = 5.dp,

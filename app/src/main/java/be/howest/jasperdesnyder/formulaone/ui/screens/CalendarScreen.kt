@@ -20,6 +20,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import be.howest.jasperdesnyder.formulaone.data.getImageBasedOnName
+import be.howest.jasperdesnyder.formulaone.data.prettifyRaceTitle
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
@@ -29,8 +31,7 @@ import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 fun CalendarScreen(
     formulaOneApiUiState: FormulaOneApiUiState,
     viewModel: FormulaOneViewModel,
-    onRaceClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    onRaceClicked: () -> Unit
 ) {
     CalendarScreenContent(
         (formulaOneApiUiState as FormulaOneApiUiState.Success).formulaOneData.raceTable?.races!!,
@@ -75,7 +76,7 @@ private fun RaceItem(
     modifier: Modifier = Modifier
 ) {
     Card (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(120.dp)
             .padding(vertical = 5.dp)
@@ -109,7 +110,7 @@ private fun RaceItem(
                )
 
                Text(
-                   text = title.replace("_", " ").replaceFirstChar { it.uppercase() },
+                   text = prettifyRaceTitle(title),
                    fontSize = 30.sp,
                    fontWeight = FontWeight.Bold
                )

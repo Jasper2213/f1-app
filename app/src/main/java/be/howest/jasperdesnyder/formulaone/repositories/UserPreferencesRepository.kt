@@ -1,4 +1,4 @@
-package be.howest.jasperdesnyder.formulaone.data
+package be.howest.jasperdesnyder.formulaone.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import be.howest.jasperdesnyder.formulaone.data.StandingsTopBar
+import be.howest.jasperdesnyder.formulaone.data.getPrettyNumber
 import be.howest.jasperdesnyder.formulaone.model.ConstructorStandings
 import be.howest.jasperdesnyder.formulaone.model.StandingsTable
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
@@ -32,7 +34,7 @@ fun ConstructorStandingsScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         StandingsTopBar(
             onDriverStandingsClicked = onDriverStandingsClicked,
@@ -67,14 +69,10 @@ private fun ConstructorItem(
     number: Int,
     modifier: Modifier = Modifier
 ) {
-    val prettyNumber = if (number < 10) {
-        "0$number"
-    } else {
-        "$number"
-    }
+    val prettyNumber = getPrettyNumber(number)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 5.dp)
             .background(
@@ -94,7 +92,7 @@ private fun ConstructorItem(
         elevation = 5.dp
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(25.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -104,14 +102,14 @@ private fun ConstructorItem(
                     text = prettyNumber,
                     fontSize = 20.sp,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.padding(end = 10.dp)
+                    modifier = modifier.padding(end = 10.dp)
                 )
 
                 Text(
                     text = constructorStandings.constructor?.name!!,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 10.dp)
+                    modifier = modifier.padding(end = 10.dp)
                 )
             }
 

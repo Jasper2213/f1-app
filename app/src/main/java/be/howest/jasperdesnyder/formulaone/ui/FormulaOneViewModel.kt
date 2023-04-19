@@ -11,10 +11,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import be.howest.jasperdesnyder.formulaone.FormulaOneApplication
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
-import be.howest.jasperdesnyder.formulaone.data.UserPreferencesRepository
 import be.howest.jasperdesnyder.formulaone.model.MRData
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.network.FormulaOneApi
+import be.howest.jasperdesnyder.formulaone.repositories.UserPreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

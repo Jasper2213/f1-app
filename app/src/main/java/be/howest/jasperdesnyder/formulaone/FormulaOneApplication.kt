@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import be.howest.jasperdesnyder.formulaone.data.UserPreferencesRepository
+import be.howest.jasperdesnyder.formulaone.repositories.UserPreferencesRepository
 
 private const val NOTIFICATION_PREFERENCES = "notification_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
