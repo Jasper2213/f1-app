@@ -144,7 +144,7 @@ fun getImageBasedOnName(name: String): Int {
         "interlagos" -> R.drawable.brazil
         "vegas" -> R.drawable.las_vegas
         "yas_marina" -> R.drawable.abu_dhabi
-        else -> R.drawable.bahrain
+        else -> R.drawable.no_image
     }
 }
 
