@@ -115,7 +115,7 @@ private fun PredictionScreenContent(
         // Select driver
         Column {
             Text(
-                text = "Who will win the ${uiState.nextRace?.raceName}?",
+                text = "Who will win the ${(viewModel.formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace.raceName}?",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -243,8 +243,10 @@ private fun PredictionScreenContent(
                     else Color.Gray
             )
         ) {
+            val buttonText: String = if (uiState.predictionsEnabled) stringResource(R.string.submit)
+                                     else "Prediction already submitted"
             Text(
-                text = stringResource(R.string.submit),
+                text = buttonText,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.onPrimary
