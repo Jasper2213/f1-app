@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
+import be.howest.jasperdesnyder.formulaone.data.checkPredictions
 import be.howest.jasperdesnyder.formulaone.data.getMillisToNextRace
 import be.howest.jasperdesnyder.formulaone.data.queueNotification
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
@@ -115,14 +117,12 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                             navController.navigate(FormulaOneScreen.Start.name)
 
                         val timeToNextRace = getMillisToNextRace(uiState)
-
                         val workManager = WorkManager.getInstance(context)
-
                         if (viewModel.formulaOneApiUiState is FormulaOneApiUiState.Success &&                   // API data is loaded
                             uiState.notificationsEnabled                                                        // User opted in for notifications
-                        ) {
-                            queueNotification(workManager, timeToNextRace)
-                        }
+                        ) queueNotification(workManager, timeToNextRace)
+
+                        checkPredictions(uiState, viewModel)
                     },
                     onRetryClicked = {
                         viewModel.formulaOneApiUiState = FormulaOneApiUiState.Loading

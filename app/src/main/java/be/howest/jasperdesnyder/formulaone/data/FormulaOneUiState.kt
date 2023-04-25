@@ -11,7 +11,9 @@ data class FormulaOneUiState (
     var selectedDriver: String? = null,      // Only need to keep first name for this to function
     var usedPoints: Double = 0.00,
     var nextRace: Race? = null,
+    var previousRace: Race? = null,
     var predictionsEnabled: Boolean = true,
+    var racePredictedOn: String? = null,
 
     var notificationsEnabled: Boolean = false,
 )

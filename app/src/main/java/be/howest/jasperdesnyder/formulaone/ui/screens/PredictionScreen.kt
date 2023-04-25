@@ -265,10 +265,11 @@ private fun PredictionScreenContent(
                         selectedDriver.isNotEmpty() &&
                         usedPoints <= uiState.availablePoints
                     ) {
+                        viewModel.updatePredictionsEnabled(false)
+                        viewModel.updateRacePredictedOn((viewModel.formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace.raceName!!)
                         viewModel.updateUsedPoints(usedPoints)
                         viewModel.updateAvailablePoints()
                         viewModel.updatePredictedDriver(selectedDriver)
-                        viewModel.updatePredictionsEnabled(false)
                     }
 
                     onSubmitClicked()

@@ -23,6 +23,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.Race
+import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
 import be.howest.jasperdesnyder.formulaone.ui.screens.Line
 import be.howest.jasperdesnyder.formulaone.workers.NotificationWorker
 import java.time.LocalDate
@@ -219,3 +220,29 @@ fun StandingsSelector(
 }
 
 fun prettifyRaceTitle(title: String) = title.replace("_", " ").replaceFirstChar { it.uppercase() }
+
+fun checkPredictions(
+    uiState: FormulaOneUiState,
+    viewModel: FormulaOneViewModel
+) {
+    val userPredicted = !uiState.predictionsEnabled
+    if (userPredicted) {
+        val racePredictedOn = uiState.racePredictedOn
+        val nextRace = uiState.nextRace
+        val previousRaceWinner = uiState.previousRace?.results?.get(0)?.driver?.lastName
+        val availablePoints = uiState.availablePoints
+        val usedPoints = uiState.usedPoints
+        val predictedDriver = uiState.selectedDriver!!.split(" ")[1]
+
+        if (racePredictedOn != nextRace?.raceName) {
+            if (previousRaceWinner == predictedDriver) {
+                viewModel.setAvailablePoints(availablePoints + (usedPoints * 1.2))
+            }
+
+            viewModel.updatePredictionsEnabled(true)
+            viewModel.updateUsedPoints(0.0)
+            viewModel.updatePredictedDriver("")
+            viewModel.updateRacePredictedOn("")
+        }
+    }
+}

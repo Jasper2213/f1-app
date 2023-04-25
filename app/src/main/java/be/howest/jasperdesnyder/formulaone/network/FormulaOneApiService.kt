@@ -19,6 +19,9 @@ interface FormulaOneApiService {
     @GET("current/next.json")
     suspend fun getNextRace(): ApiCalendarResponse
 
+    @GET("current/last/results.json")
+    suspend fun getPreviousRace(): ApiCalendarResponse
+
     @GET("current/results.json")
     suspend fun getResults(): ApiCalendarResponse
 

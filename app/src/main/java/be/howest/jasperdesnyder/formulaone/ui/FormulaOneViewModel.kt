@@ -39,6 +39,7 @@ class FormulaOneViewModel(
                 usedPoints = userPreferencesRepository.getUsedPoints(),
                 predictionsEnabled = userPreferencesRepository.getPredictionsEnabled(),
                 selectedDriver = userPreferencesRepository.getPredictedDriver(),
+                racePredictedOn = userPreferencesRepository.getRacePredictedOn(),
                 notificationsEnabled = notificationsEnabled
             )
         }
@@ -97,6 +98,9 @@ class FormulaOneViewModel(
                     val nextRace = getNextRace()
                     uiState.value.nextRace = nextRace
 
+                    val previousRace = getPreviousRace()
+                    uiState.value.previousRace = previousRace
+
                     addResultsToMrData(mrData)
                     addDriversStandingsToMrData(mrData)
                     addConstructorsStandingsToMrData(mrData)
@@ -150,6 +154,13 @@ private suspend fun getNextRace(): Race {
     val nextRace = apiResponse.mrData?.raceTable?.races?.get(0)
 
     return nextRace!!
+}
+
+private suspend fun getPreviousRace(): Race {
+    val apiResponse = FormulaOneApi.retrofitService.getPreviousRace()
+    val previousRace = apiResponse.mrData?.raceTable?.races?.get(0)
+
+    return previousRace!!
 }
 
 private suspend fun getMrData(): MRData {

@@ -189,4 +189,18 @@ class UserPreferencesRepository(
             preferences[RACE_PREDICTED_ON] = racePredictedOn
         }
     }
+
+    suspend fun getRacePredictedOn(): String? {
+        return dataStore.data
+            .catch {
+                if (it is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw it
+                }
+            }
+            .map { preferences ->
+                preferences[RACE_PREDICTED_ON]
+            }.first()
+    }
 }
