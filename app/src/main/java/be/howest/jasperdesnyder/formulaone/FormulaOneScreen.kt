@@ -83,7 +83,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             if (currentScreen != FormulaOneScreen.Startup) {
                 FormulaOneTopBar(
                     currentScreenTitle = currentScreen.title,
-                    canNavigateBack = navController.previousBackStackEntry != null,
+                    canNavigateBack = navController.previousBackStackEntry != null && currentScreen == FormulaOneScreen.RaceDetail,
                     navigateUp = { navController.navigateUp() },
                     viewModel = viewModel,
                     uiState = uiState
