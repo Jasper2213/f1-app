@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.CalendarContract
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,7 +63,7 @@ fun queueNotification(workManager: WorkManager, timeToNextRace: Long) {
     val notificationWorkRequest =
         OneTimeWorkRequestBuilder<NotificationWorker>()       // Only show notification if user opted in for it
             .setInitialDelay(
-                1000 * 30/*timeToNextRace*/,
+                /*1000 * 30*/timeToNextRace,
                 TimeUnit.MILLISECONDS
             )
             .addTag("notification_before_race")
@@ -120,6 +123,15 @@ fun createCalendarIntent(
     ContextCompat.startActivity(context, intent, null)
 }
 
+fun createMailIntent(launcher: ManagedActivityResultLauncher<Intent, ActivityResult>) {
+    val intent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:")
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("jasper.desnyder@student.howest.be"))
+    }
+
+    launcher.launch(Intent.createChooser(intent, "Send email"))
+}
+
 fun getImageBasedOnName(name: String): Int {
     return when (name) {
         "bahrain" -> R.drawable.bahrain
@@ -158,7 +170,7 @@ fun prettifyDate(firstDate: String, lastDate: String): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun getDateFromSession(date: String): String {
+fun getDayInWeekFromDate(date: String): String {
     return LocalDate.parse(date).dayOfWeek.toString().lowercase()
         .replaceFirstChar { it.uppercase() }
 }
@@ -219,30 +231,39 @@ fun StandingsSelector(
     )
 }
 
-fun prettifyRaceTitle(title: String) = title.replace("_", " ").replaceFirstChar { it.uppercase() }
+fun prettifyRaceTitle(title: String): String {
+    return title.replace("_", " ").split(" ").joinToString(" ") {
+        it.replaceFirstChar { char -> char.uppercase() }
+    }
+}
 
 fun checkPredictions(
     uiState: FormulaOneUiState,
     viewModel: FormulaOneViewModel
 ) {
-    val userPredicted = !uiState.predictionsEnabled
-    if (userPredicted) {
-        val racePredictedOn = uiState.racePredictedOn
-        val nextRace = uiState.nextRace
-        val previousRaceWinner = uiState.previousRace?.results?.get(0)?.driver?.lastName
-        val availablePoints = uiState.availablePoints
-        val usedPoints = uiState.usedPoints
-        val predictedDriver = uiState.selectedDriver!!.split(" ")[1]
+    try {
+        val userPredicted = !uiState.predictionsEnabled
 
-        if (racePredictedOn != nextRace?.raceName) {
-            if (previousRaceWinner == predictedDriver) {
-                viewModel.setAvailablePoints(availablePoints + (usedPoints * 1.2))
+        if (userPredicted) {
+            val racePredictedOn = uiState.racePredictedOn
+            val nextRace = uiState.nextRace?.raceName
+            val previousRaceWinner = uiState.previousRace?.results?.get(0)?.driver?.lastName
+            val availablePoints = uiState.availablePoints
+            val usedPoints = uiState.usedPoints
+            val predictedDriver = uiState.selectedDriver!!.split(" ")[1]
+
+            if (racePredictedOn != nextRace) {
+                if (previousRaceWinner == predictedDriver) {
+                    viewModel.setAvailablePoints(availablePoints + (usedPoints * 1.2))
+                }
+
+                viewModel.updatePredictionsEnabled(true)
+                viewModel.updateUsedPoints(0.0)
+                viewModel.updatePredictedDriver("")
+                viewModel.updateRacePredictedOn("")
             }
-
-            viewModel.updatePredictionsEnabled(true)
-            viewModel.updateUsedPoints(0.0)
-            viewModel.updatePredictedDriver("")
-            viewModel.updateRacePredictedOn("")
         }
+    } catch (e: Exception) {
+        Log.e("debug", "Something went wrong while checking predictions", e)
     }
 }

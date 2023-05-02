@@ -21,10 +21,11 @@ import androidx.compose.ui.unit.sp
 import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.data.createCalendarIntent
 import be.howest.jasperdesnyder.formulaone.data.createMapsIntent
-import be.howest.jasperdesnyder.formulaone.data.getDateFromSession
+import be.howest.jasperdesnyder.formulaone.data.getDayInWeekFromDate
 import be.howest.jasperdesnyder.formulaone.data.getImageBasedOnName
 import be.howest.jasperdesnyder.formulaone.data.getTimeInLocalFormat
 import be.howest.jasperdesnyder.formulaone.data.prettifyDate
+import be.howest.jasperdesnyder.formulaone.data.prettifyRaceTitle
 import be.howest.jasperdesnyder.formulaone.model.Race
 import be.howest.jasperdesnyder.formulaone.model.Session
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
@@ -71,9 +72,7 @@ fun GeneralRaceInformation(race: Race, modifier: Modifier = Modifier) {
                 modifier = modifier.padding(end = 10.dp)
             ) {
                 Text(
-                    text = race.circuit?.circuitId!!
-                        .replace("_", " ")
-                        .replaceFirstChar { it.uppercase() },
+                    text = prettifyRaceTitle(race.circuit?.circuitId!!),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline
@@ -197,12 +196,12 @@ private fun Session(
     when (race) {
         null -> {
             time = getTimeInLocalFormat(session?.time!!)
-            date = getDateFromSession(session.date!!)
+            date = getDayInWeekFromDate(session.date!!)
         }
 
         else -> {
             time = getTimeInLocalFormat(race.time!!)
-            date = getDateFromSession(race.date!!)
+            date = getDayInWeekFromDate(race.date!!)
         }
     }
 

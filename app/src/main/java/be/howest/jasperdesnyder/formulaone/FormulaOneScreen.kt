@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -39,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.work.WorkManager
 import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.data.checkPredictions
+import be.howest.jasperdesnyder.formulaone.data.createMailIntent
 import be.howest.jasperdesnyder.formulaone.data.getMillisToNextRace
 import be.howest.jasperdesnyder.formulaone.data.queueNotification
 import be.howest.jasperdesnyder.formulaone.repositories.NavItemsRepo
@@ -129,12 +129,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
                         navController.navigate(FormulaOneScreen.Startup.name)
                     },
                     onEmailClicked = {
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("jasper.desnyder@student.howest.be"))
-                        }
-
-                        launcher.launch(Intent.createChooser(intent, "Send email"))
+                        createMailIntent(launcher)
                     }
                 )
             }
