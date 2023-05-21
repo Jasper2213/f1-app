@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -199,10 +201,10 @@ fun StandingsTopBar(
         StandingsSelector(
             text = "Drivers",
             onClick = onDriverStandingsClicked,
-            isBold = driversSelected
+            isBold = driversSelected,
         )
         StandingsSelector(
-            text = "Constructors",
+            text = stringResource(R.string.constructors),
             onClick = onConstructorStandingsClicked,
             isBold = !driversSelected
         )
@@ -227,7 +229,7 @@ fun StandingsSelector(
         fontWeight = boldState,
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(10.dp)
+            .padding(10.dp).testTag(text)
     )
 }
 

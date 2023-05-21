@@ -1,6 +1,7 @@
 package be.howest.jasperdesnyder.formulaone.repositories
 
 import be.howest.jasperdesnyder.formulaone.FormulaOneScreen
+import be.howest.jasperdesnyder.formulaone.R
 import be.howest.jasperdesnyder.formulaone.model.BottomNavItem
 import compose.icons.LineAwesomeIcons
 import compose.icons.lineawesomeicons.BalanceScaleLeftSolid
@@ -12,27 +13,27 @@ import compose.icons.lineawesomeicons.ListOlSolid
 object NavItemsRepo {
     val items = listOf(
         BottomNavItem(
-            label = "Predictions",
+            label = R.string.nav_predictions,
             icon = LineAwesomeIcons.BalanceScaleLeftSolid,
             route = FormulaOneScreen.Predictions
         ),
         BottomNavItem(
-            label = "Standings",
+            label = R.string.nav_standings,
             icon = LineAwesomeIcons.ListOlSolid,
             route = FormulaOneScreen.DriverStandings
         ),
         BottomNavItem(
-            label = "Home",
+            label = R.string.nav_home,
             icon = LineAwesomeIcons.HomeSolid,
             route = FormulaOneScreen.Start
         ),
         BottomNavItem(
-            label = "Calendar",
+            label = R.string.nav_calendar,
             icon = LineAwesomeIcons.Calendar,
             route = FormulaOneScreen.Calendar
         ),
         BottomNavItem(
-            label = "Menu",
+            label = R.string.nav_menu,
             icon = LineAwesomeIcons.BarsSolid,
             route = FormulaOneScreen.Menu
         )

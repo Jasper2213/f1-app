@@ -25,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,8 +62,7 @@ enum class FormulaOneScreen(@StringRes val title: Int) {
 //@RequiresApi(Build.VERSION_CODES.O)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun FormulaOneApp(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+fun FormulaOneApp(modifier: Modifier = Modifier, navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = FormulaOneScreen.valueOf(
         backStackEntry?.destination?.route ?: FormulaOneScreen.Start.name
@@ -85,7 +85,7 @@ fun FormulaOneApp(modifier: Modifier = Modifier) {
             if (currentScreen != FormulaOneScreen.Startup) {
                 FormulaOneTopBar(
                     currentScreenTitle = currentScreen.title,
-                    canNavigateBack = navController.previousBackStackEntry != null && currentScreen == FormulaOneScreen.RaceDetail,
+                    canNavigateBack = navController.previousBackStackEntry != null && currentScreen != FormulaOneScreen.Start,
                     navigateUp = { navController.navigateUp() },
                     viewModel = viewModel,
                     uiState = uiState
@@ -355,7 +355,7 @@ private fun FormulaOneBottomBar(
                 icon = {
                     Icon(
                         navItem.icon,
-                        contentDescription = navItem.label,
+                        contentDescription = stringResource(id = navItem.label),
                         modifier = Modifier
                             .size(40.dp)
                             .scale(iconScale.value)

@@ -48,4 +48,10 @@
     <string name="sprint">Sprint</string>
     <string name="try_again">Try again</string>
     <string name="startup">Start up</string>
+    <string name="nav_predictions">Predictions</string>
+    <string name="nav_standings">Standings</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_menu">Menu</string>
+    <string name="constructors">Constructors</string>
 </resources>

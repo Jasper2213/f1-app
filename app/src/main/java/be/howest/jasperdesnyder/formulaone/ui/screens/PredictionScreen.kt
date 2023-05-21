@@ -1,5 +1,6 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -139,7 +141,7 @@ private fun PredictionScreenContent(
                     Icon(
                         imageVector = icon,
                         contentDescription = "contentDescription",
-                        modifier = Modifier.clickable { expanded = !expanded })
+                        modifier = modifier.clickable { expanded = !expanded }.testTag("dropdown"))
                 },
                 readOnly = true,
                 enabled = uiState.predictionsEnabled
@@ -161,7 +163,7 @@ private fun PredictionScreenContent(
                         modifier = modifier
                             .background(
                                 color = if (index % 2 == 0) Color.LightGray else Color.White
-                            )
+                            ).testTag(driver.lastName!!)
                     ) {
                         Text(
                             text = driver.firstName + " " + driver.lastName,
@@ -204,7 +206,7 @@ private fun PredictionScreenContent(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth().testTag("pointsTextField"),
                 enabled = uiState.predictionsEnabled
             )
         }
@@ -235,7 +237,7 @@ private fun PredictionScreenContent(
                     showConfirmDialog = true
                 } else showErrorDialog = true
             },
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth().testTag("submitButton"),
             enabled = uiState.predictionsEnabled,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor =
