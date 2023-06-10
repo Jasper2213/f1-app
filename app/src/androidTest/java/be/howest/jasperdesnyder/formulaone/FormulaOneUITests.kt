@@ -1,18 +1,14 @@
 package be.howest.jasperdesnyder.formulaone
 
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
@@ -92,25 +88,38 @@ class FormulaOneUITests {
     }
 
     @Test
-    fun fillOutPredictions() {
+    fun submitPrediction() {
         navigateToPredictionsScreen()
+        resetPredictions()
+
         navController.assertCurrentRouteName(FormulaOneScreen.Predictions.name)
 
         composeTestRule.onNodeWithTag("dropdown").assertExists().performClick()
         composeTestRule.onNodeWithTag("Verstappen").assertExists().performClick()
-        composeTestRule.onNodeWithTag("dropdown").assert(hasText("Max Verstappen"))
 
-        composeTestRule.onNodeWithTag("pointsTextField")
-            .assertExists()
-            .performClick()
-            .performTextInput("200.0")
-        composeTestRule.onNodeWithTag("pointsTextField").assert(hasText("200.0"))
+        composeTestRule.onNodeWithTag("pointsTextField").assertExists().performTextInput("50")
 
-        composeTestRule.onNodeWithTag("submitButton")
-            .assertExists()
-            .performClick()
-//            .assertIsNotEnabled()
-            // TODO: Deal with alert dialog
+        composeTestRule.onNodeWithTag("potentialPoints").assertTextEquals("60.0")
+
+        composeTestRule.onNodeWithTag("submitButton").assertExists().assertIsEnabled().performClick()
+
+        composeTestRule.onNodeWithTag("confirmButton").assertExists().performClick()
+
+        composeTestRule.onNodeWithTag("submitButton").assertExists().assertIsNotEnabled()
+    }
+
+    @Test
+    fun submitIncorrectPrediction() {
+        navigateToPredictionsScreen()
+        resetPredictions()
+
+        navController.assertCurrentRouteName(FormulaOneScreen.Predictions.name)
+
+        composeTestRule.onNodeWithTag("submitButton").assertExists().assertIsEnabled().performClick()
+
+        composeTestRule.onNodeWithTag("errorDialog").assertExists()
+        composeTestRule.onNodeWithTag("confirmErrorButton").assertExists().performClick()
+        composeTestRule.onNodeWithTag("errorDialog").assertDoesNotExist()
     }
 
     private fun navigateToStartScreen() {
@@ -141,5 +150,9 @@ class FormulaOneUITests {
     private fun navigateToScreen(screen: Int) {
         composeTestRule.waitUntil(5_000) { navController.currentDestination?.route == FormulaOneScreen.Start.name }    // Wait until API is loaded
         composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(screen)).performClick()
+    }
+
+    private fun resetPredictions() {
+        composeTestRule.onNodeWithTag("resetPredictionsButton").assertExists().performClick()
     }
 }

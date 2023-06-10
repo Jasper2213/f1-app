@@ -229,7 +229,8 @@ fun StandingsSelector(
         fontWeight = boldState,
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(10.dp).testTag(text)
+            .padding(10.dp)
+            .testTag(text)
     )
 }
 

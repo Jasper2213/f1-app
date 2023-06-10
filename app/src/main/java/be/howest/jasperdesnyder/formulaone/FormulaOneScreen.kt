@@ -317,6 +317,7 @@ fun FormulaOneTopBar(
                             viewModel.updatePredictedDriver("")
                             viewModel.setAvailablePoints(2000.0)
                         }
+                        .testTag("resetPredictionsButton")
                 )
             }
         }

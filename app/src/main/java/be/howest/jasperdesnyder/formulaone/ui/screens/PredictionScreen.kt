@@ -1,6 +1,5 @@
 package be.howest.jasperdesnyder.formulaone.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -224,7 +223,8 @@ private fun PredictionScreenContent(
             Text(
                 text = (uiState.usedPoints * 1.2).toString(),
                 fontSize = 24.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier= modifier.testTag("potentialPoints")
             )
         }
 
@@ -262,22 +262,25 @@ private fun PredictionScreenContent(
             title = { Text("Confirm prediction?") },
             text = { Text("This cannot be undone!") },
             confirmButton = {
-                Button(onClick = {
-                    if (usedPoints != 0.0 &&
-                        selectedDriver.isNotEmpty() &&
-                        usedPoints <= uiState.availablePoints
-                    ) {
-                        viewModel.updatePredictionsEnabled(false)
-                        viewModel.updateRacePredictedOn((viewModel.formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace.raceName!!)
-                        viewModel.updateUsedPoints(usedPoints)
-                        viewModel.updateAvailablePoints()
-                        viewModel.updatePredictedDriver(selectedDriver)
-                    }
+                Button(
+                    onClick = {
+                        if (usedPoints != 0.0 &&
+                            selectedDriver.isNotEmpty() &&
+                            usedPoints <= uiState.availablePoints
+                        ) {
+                            viewModel.updatePredictionsEnabled(false)
+                            viewModel.updateRacePredictedOn((viewModel.formulaOneApiUiState as FormulaOneApiUiState.Success).nextRace.raceName!!)
+                            viewModel.updateUsedPoints(usedPoints)
+                            viewModel.updateAvailablePoints()
+                            viewModel.updatePredictedDriver(selectedDriver)
+                        }
 
-                    onSubmitClicked()
+                        onSubmitClicked()
 
-                    showConfirmDialog = false
-                }) {
+                        showConfirmDialog = false
+                    },
+                    modifier = modifier.testTag("confirmButton")
+                ) {
                     Text("Confirm")
                 }
             },
@@ -297,12 +300,16 @@ private fun PredictionScreenContent(
             title = { Text("Error") },
             text = { Text("Please fill in all the necessary fields, and make sure you have enough points!") },
             confirmButton = {
-                TextButton(onClick = {
-                    showErrorDialog = false
-                }) {
+                TextButton(
+                    onClick = {
+                        showErrorDialog = false
+                    },
+                    modifier = modifier.testTag("confirmErrorButton")
+                ) {
                     Text("Close")
                 }
-            }
+            },
+            modifier = modifier.testTag("errorDialog")
         )
     }
 }
