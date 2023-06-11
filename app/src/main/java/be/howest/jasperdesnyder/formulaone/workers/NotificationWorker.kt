@@ -38,7 +38,7 @@ fun makeStatusNotification(context: Context) {
         // the NotificationChannel class is new and not in the support library
         val name = "Verbose WorkManager Notifications"
         val description = "Shows notifications whenever work starts"
-        val importance = NotificationManager.IMPORTANCE_HIGH
+        val importance = NotificationManager.IMPORTANCE_HIGH                    // Makes sure the notification gets shown and makes a noise
         val channel = NotificationChannel("CHANNEL_ID", name, importance)
         channel.description = description
 
@@ -57,12 +57,12 @@ fun makeStatusNotification(context: Context) {
     val builder = NotificationCompat.Builder(context, "CHANNEL_ID")
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Race starting soon")
-        .setContentText("The Baku GP is starting in approximately 30 minutes!")
+        .setContentText("The race is starting in approximately 30 minutes!")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
 
-    // Show the notification
+    // Check notification permission
     if (ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.POST_NOTIFICATIONS
@@ -74,5 +74,6 @@ fun makeStatusNotification(context: Context) {
             1)
     }
 
+    // Add notification to the manager
     NotificationManagerCompat.from(context).notify(0, builder.build())
 }

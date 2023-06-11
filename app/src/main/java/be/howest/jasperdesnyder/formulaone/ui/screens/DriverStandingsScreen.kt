@@ -117,12 +117,12 @@ private fun DriverItem(
                 Column {
                     Text(
                         text = driver?.firstName + " " + driver?.lastName,
-                        fontSize = 26.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = driverStanding.constructors[0].name!!,
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontStyle = FontStyle.Italic,
                     )
                 }

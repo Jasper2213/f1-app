@@ -73,13 +73,13 @@ fun GeneralRaceInformation(race: Race, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = prettifyRaceTitle(race.circuit?.circuitId!!),
-                    fontSize = 32.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline
                 )
                 Text(
                     text = prettifyDate(race.firstPractice?.date!!, race.date!!),
-                    fontSize = 24.sp,
+                    fontSize = 18.sp,
                     fontStyle = FontStyle.Italic
                 )
             }
@@ -220,13 +220,13 @@ private fun Session(
         ) {
             Text(
                 text = date,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontStyle = FontStyle.Italic
             )
 
             Text(
                 text = time,
-                fontSize = 24.sp
+                fontSize = 20.sp
             )
         }
     }

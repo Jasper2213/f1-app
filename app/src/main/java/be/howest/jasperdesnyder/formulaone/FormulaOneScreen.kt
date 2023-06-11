@@ -204,7 +204,6 @@ fun FormulaOneApp(modifier: Modifier = Modifier, navController: NavHostControlle
                     formulaOneApiUiState = viewModel.formulaOneApiUiState,
                     uiState = uiState,
                     onSubmitClicked = {
-                        // TODO: Improve this
                         navController.navigate(FormulaOneScreen.Predictions.name)
                     },
                     viewModel = viewModel

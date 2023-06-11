@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,8 +51,6 @@ import be.howest.jasperdesnyder.formulaone.data.FormulaOneUiState
 import be.howest.jasperdesnyder.formulaone.model.Driver
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneApiUiState
 import be.howest.jasperdesnyder.formulaone.ui.FormulaOneViewModel
-
-// TODO: Add text when predictions are disabled?
 
 @Composable
 fun PredictionScreen(
@@ -203,7 +202,8 @@ private fun PredictionScreenContent(
                     )
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
                 ),
                 modifier = modifier.fillMaxWidth().testTag("pointsTextField"),
                 enabled = uiState.predictionsEnabled

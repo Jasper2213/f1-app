@@ -72,7 +72,7 @@ fun MenuItem(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = text,
-            fontSize = 24.sp,
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = modifier
